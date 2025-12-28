@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thumbnail Kuis Sains</title>
+    <title>Thumbnail Bagian Tumbuhan</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -24,8 +24,8 @@
             height: 720px;
             position: relative;
             overflow: hidden;
-            /* Background Lab Sains Futuristik */
-            background: linear-gradient(135deg, #311B92 0%, #6200EA 50%, #651FFF 100%);
+            /* Background Alam Segar */
+            background: linear-gradient(135deg, #43A047 0%, #66BB6A 50%, #A5D6A7 100%);
             box-shadow: 0 0 50px rgba(0,0,0,0.5);
             display: flex;
             flex-direction: column;
@@ -33,13 +33,13 @@
             justify-content: center;
         }
 
-        /* Pattern Molekul di Background */
-        .molecule-bg {
+        /* Pattern Daun di Background */
+        .leaf-bg {
             position: absolute;
             width: 100%;
             height: 100%;
-            background-image: radial-gradient(circle, rgba(255,255,255,0.1) 10%, transparent 10%);
-            background-size: 50px 50px;
+            background-image: radial-gradient(circle, rgba(255,255,255,0.15) 10%, transparent 10%);
+            background-size: 60px 60px;
             z-index: 1;
         }
 
@@ -48,34 +48,34 @@
             position: absolute;
             width: 900px;
             height: 900px;
-            background: radial-gradient(circle, rgba(105, 240, 174, 0.2) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
             border-radius: 50%;
             z-index: 2;
         }
 
-        /* Teks Judul dengan Efek 3D Neon */
+        /* Teks Judul dengan Efek 3D */
         .title-container {
             z-index: 20;
             text-align: center;
             transform: rotate(-2deg);
-            margin-top: -40px;
+            margin-top: -30px;
         }
 
         .title-main {
-            font-size: 130px;
+            font-size: 110px;
             line-height: 0.9;
-            color: #FFFF00; /* Kuning Neon */
-            -webkit-text-stroke: 6px #3E2723;
+            color: #FFEB3B; /* Kuning Cerah */
+            -webkit-text-stroke: 6px #1B5E20; /* Hijau Tua */
             text-shadow: 
-                8px 8px 0px #FF3D00, 
+                8px 8px 0px #2E7D32, 
                 15px 15px 0px rgba(0,0,0,0.3);
         }
 
         .title-sub {
-            font-size: 80px;
-            color: #00E676; /* Hijau Neon */
-            -webkit-text-stroke: 4px #1B5E20;
-            text-shadow: 6px 6px 0px #004D40;
+            font-size: 70px;
+            color: #FFFFFF;
+            -webkit-text-stroke: 4px #004D40;
+            text-shadow: 6px 6px 0px #00695C;
             margin-top: 10px;
         }
 
@@ -84,10 +84,10 @@
             position: absolute;
             top: 40px;
             left: 40px;
-            background: #FF4081;
+            background: #FF5722; /* Oranye */
             color: white;
             padding: 15px 40px;
-            font-size: 40px;
+            font-size: 35px;
             border-radius: 20px;
             border: 6px solid white;
             box-shadow: 0 10px 20px rgba(0,0,0,0.3);
@@ -100,7 +100,7 @@
             position: absolute;
             top: 40px;
             right: 40px;
-            background: #2979FF;
+            background: #0288D1; /* Biru */
             color: white;
             width: 220px;
             height: 220px;
@@ -115,38 +115,38 @@
             z-index: 30;
         }
 
-        /* Ikon Wujud Zat */
+        /* Ikon Bagian Tumbuhan */
         .icon-container {
             display: flex;
-            gap: 60px;
-            margin-top: 40px;
+            gap: 40px;
+            margin-top: 50px;
             z-index: 20;
         }
 
-        .state-card {
-            background: rgba(255, 255, 255, 0.9);
+        .part-card {
+            background: rgba(255, 255, 255, 0.95);
             padding: 20px;
             border-radius: 30px;
             box-shadow: 0 15px 30px rgba(0,0,0,0.4);
             text-align: center;
-            width: 200px;
+            width: 180px;
             border: 5px solid;
             transition: transform 0.3s;
         }
 
-        .state-card.solid { border-color: #795548; transform: rotate(-5deg); }
-        .state-card.liquid { border-color: #03A9F4; transform: translateY(-30px); }
-        .state-card.gas { border-color: #9E9E9E; transform: rotate(5deg); }
+        .part-card.flower { border-color: #E91E63; transform: rotate(-8deg); }
+        .part-card.leaf { border-color: #43A047; transform: translateY(-20px); }
+        .part-card.root { border-color: #795548; transform: rotate(8deg); }
 
-        .state-emoji {
-            font-size: 100px;
+        .part-emoji {
+            font-size: 80px;
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2));
         }
 
-        .state-label {
-            font-size: 35px;
+        .part-label {
+            font-size: 30px;
             font-weight: 900;
             text-transform: uppercase;
             color: #333;
@@ -157,7 +157,7 @@
             position: absolute;
             font-size: 80px;
             z-index: 10;
-            opacity: 0.8;
+            opacity: 0.9;
             animation: float 4s ease-in-out infinite;
         }
 
@@ -171,12 +171,12 @@
 <body>
 
     <div id="thumbnail">
-        <div class="molecule-bg"></div>
+        <div class="leaf-bg"></div>
         <div class="glow-circle"></div>
 
         <!-- Badge -->
         <div class="class-badge font-black">
-            Untuk siswa SD dan SMP 📚
+            Untuk SD & SMP 📚
         </div>
 
         <div class="count-badge">
@@ -187,33 +187,33 @@
         <!-- Judul -->
         <div class="title-container">
             <div class="title-sub font-black">KUIS SAINS</div>
-            <div class="title-main font-black">WUJUD ZAT</div>
+            <div class="title-main font-black">BAGIAN<br>TUMBUHAN</div>
         </div>
 
-        <!-- Kartu Wujud Zat -->
+        <!-- Kartu Bagian Tumbuhan -->
         <div class="icon-container">
-            <!-- Padat -->
-            <div class="state-card solid">
-                <span class="state-emoji">🧊</span>
-                <span class="state-label">Padat</span>
+            <!-- Bunga -->
+            <div class="part-card flower">
+                <span class="part-emoji">🌸</span>
+                <span class="part-label">Bunga</span>
             </div>
-            <!-- Cair -->
-            <div class="state-card liquid">
-                <span class="state-emoji">💧</span>
-                <span class="state-label">Cair</span>
+            <!-- Daun -->
+            <div class="part-card leaf">
+                <span class="part-emoji">🍃</span>
+                <span class="part-label">Daun</span>
             </div>
-            <!-- Gas -->
-            <div class="state-card gas">
-                <span class="state-emoji">🎈</span>
-                <span class="state-label">Gas</span>
+            <!-- Akar -->
+            <div class="part-card root">
+                <span class="part-emoji">🥕</span>
+                <span class="part-label">Akar</span>
             </div>
         </div>
 
         <!-- Dekorasi -->
-        <div class="deco" style="top: 200px; left: 100px; animation-delay: 0s;">🔥</div>
-        <div class="deco" style="bottom: 150px; right: 150px; animation-delay: 1s;">🧪</div>
-        <div class="deco" style="top: 150px; right: 350px; font-size: 60px; animation-delay: 2s;">⚗️</div>
-        <div class="deco" style="bottom: 50px; left: 350px; font-size: 60px; animation-delay: 1.5s;">🌡️</div>
+        <div class="deco" style="top: 200px; left: 80px; animation-delay: 0s;">☀️</div>
+        <div class="deco" style="bottom: 150px; right: 100px; animation-delay: 1s;">🌱</div>
+        <div class="deco" style="top: 150px; right: 350px; font-size: 60px; animation-delay: 2s;">💧</div>
+        <div class="deco" style="bottom: 80px; left: 300px; font-size: 60px; animation-delay: 1.5s;">🍄</div>
 
     </div>
 

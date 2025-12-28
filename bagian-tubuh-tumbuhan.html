@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Sains: Bagian Tubuh Tumbuhan</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Fredoka untuk kesan anak-anak -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+    <!-- Confetti Effect -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Fredoka', sans-serif;
+            /* Background Bio-Lab (Hijau ke Teal Neon) */
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            color: #333;
+        }
+
+        /* Container Kartu Besar */
+        #app-container {
+            aspect-ratio: 16/9;
+            width: 90vw;
+            max-width: 1280px;
+            max-height: 90vh;
+            background: #E8F5E9; /* Hijau sangat muda */
+            border-radius: 40px;
+            box-shadow: 0 20px 0 #2E7D32, 0 30px 40px rgba(0,0,0,0.5); /* Efek 3D Hijau Tua */
+            border: 8px solid #FFF;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Dekorasi Ikon Sains Melayang */
+        .floating-icon {
+            position: absolute;
+            font-size: 3rem;
+            animation: floatUp 15s linear infinite;
+            opacity: 0.3;
+            z-index: 0;
+            bottom: -50px;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.3; }
+            100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* Tombol Jawaban "Jelly" */
+        .btn-option {
+            font-family: 'Nunito', sans-serif;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            top: 0;
+        }
+        
+        .btn-option:hover {
+            transform: translateY(-4px);
+            filter: brightness(1.1);
+        }
+
+        .btn-option:active {
+            transform: translateY(2px);
+            box-shadow: none !important;
+        }
+
+        /* Animasi Gambar Masuk */
+        @keyframes popInImage {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .image-animate {
+            animation: popInImage 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        /* Shake kalau salah */
+        @keyframes wobble {
+            0%, 100% { transform: translateX(0) rotate(0); }
+            15% { transform: translateX(-15px) rotate(-5deg); }
+            30% { transform: translateX(10px) rotate(3deg); }
+            45% { transform: translateX(-10px) rotate(-3deg); }
+            60% { transform: translateX(5px) rotate(2deg); }
+        }
+        .shake {
+            animation: wobble 0.6s ease-in-out;
+        }
+
+        /* Timer Bar Animation */
+        .timer-container {
+            width: 100%;
+            height: 24px;
+            background: #e0e0e0;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            border: 3px solid #fff;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+        }
+        
+        .timer-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #76FF03, #FFEA00, #FF1744);
+            background-size: 200% 100%;
+            width: 100%;
+            transform-origin: left;
+            transition: width 0.1s linear;
+        }
+
+        /* Styling untuk Layar Transisi */
+        .pattern-bg {
+            background-image: radial-gradient(#ffffff 15%, transparent 15%);
+            background-size: 40px 40px;
+            opacity: 0.2;
+        }
+        
+        /* Background Konten Kiri (Pola Daun) */
+        .leaf-pattern {
+             background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232E7D32' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Dekorasi Floating Icons (Tema Tumbuhan) -->
+    <div class="floating-icon" style="left: 10%; animation-duration: 12s; animation-delay: 0s;">🌱</div>
+    <div class="floating-icon" style="left: 25%; animation-duration: 15s; animation-delay: 2s;">🍂</div>
+    <div class="floating-icon" style="left: 45%; animation-duration: 10s; animation-delay: 5s;">🌻</div>
+    <div class="floating-icon" style="left: 60%; animation-duration: 18s; animation-delay: 1s;">🔬</div>
+    <div class="floating-icon" style="left: 80%; animation-duration: 14s; animation-delay: 3s;">💧</div>
+    <div class="floating-icon" style="left: 90%; animation-duration: 11s; animation-delay: 6s;">🌿</div>
+
+    <div id="app-container" class="flex flex-col p-6 z-10">
+        
+        <!-- TRANSISI LAYER -->
+        <div id="transition-screen" class="absolute inset-0 z-50 flex flex-col items-center justify-center bg-[#00C853] transition-transform duration-500 translate-x-full shadow-2xl rounded-[32px]">
+            <div class="pattern-bg absolute inset-0"></div>
+            <div id="transition-emoji" class="text-9xl animate-bounce mb-6 drop-shadow-lg z-10">🚀</div>
+            <h2 id="transition-text" class="text-6xl font-black text-white tracking-wider drop-shadow-md z-10 border-4 border-white/20 px-8 py-4 rounded-full bg-white/10 backdrop-blur-sm text-center">
+                SIAP-SIAP...
+            </h2>
+        </div>
+
+        <!-- Halaman Utama (Intro) -->
+        <div id="start-screen" class="h-full flex flex-col items-center justify-center space-y-6 animate-fade-in z-20">
+            <div class="flex items-center space-x-6">
+                <!-- Gunakan gambar asli untuk intro -->
+                <img src="https://tse2.mm.bing.net/th?q=Plant+Roots+Science+Cartoon&w=200&h=200&c=7&rs=1&p=0" class="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover">
+                <img src="https://tse2.mm.bing.net/th?q=Photosynthesis+Cartoon&w=200&h=200&c=7&rs=1&p=0" class="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover" style="animation-delay: 0.2s">
+                <img src="https://tse2.mm.bing.net/th?q=Flower+Parts+Cartoon&w=200&h=200&c=7&rs=1&p=0" class="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover" style="animation-delay: 0.4s">
+            </div>
+            
+            <div class="text-center space-y-4 bg-white/50 p-6 rounded-[30px] backdrop-blur-sm border-4 border-white">
+                <h1 class="text-6xl font-black text-[#2E7D32] tracking-wide" style="text-shadow: 3px 3px 0 #FFF;">
+                    Kuis Sains Seru!
+                </h1>
+                <p class="text-2xl text-[#43A047] font-bold">Bagian Tubuh Tumbuhan (Kelas 4)</p>
+            </div>
+
+            <button onclick="startGame()" class="mt-4 px-12 py-5 bg-[#00E676] text-white border-b-[8px] border-[#00C853] rounded-full font-black text-3xl shadow-xl hover:bg-[#69F0AE] transition transform hover:scale-105 active:border-b-0 active:translate-y-2">
+                MULAI PENELITIAN! ▶️
+            </button>
+        </div>
+
+        <!-- Halaman Gameplay -->
+        <div id="game-screen" class="hidden h-full flex flex-col z-20">
+            <div class="text-center pt-2 pb-2">
+                <h2 class="text-5xl font-black text-[#1B5E20] tracking-wider uppercase drop-shadow-sm" style="-webkit-text-stroke: 2px white;">
+                    BAGIAN TUBUH TUMBUHAN
+                </h2>
+            </div>
+
+            <div class="px-6">
+                <div class="timer-container">
+                    <div id="timer-bar" class="timer-bar" style="width: 100%;"></div>
+                </div>
+            </div>
+
+            <div class="flex-grow flex flex-row items-center justify-center gap-8 px-6 pb-6">
+                
+                <!-- Card Kiri (Tempat Gambar) -->
+                <div class="w-1/2 flex flex-col items-center justify-center bg-white border-[6px] border-[#66BB6A] border-dashed rounded-[40px] p-6 shadow-sm h-full relative overflow-hidden group">
+                    <div class="absolute inset-0 leaf-pattern opacity-50"></div>
+                    
+                    <!-- Container Gambar -->
+                    <div class="relative w-full h-64 flex items-center justify-center mb-4 z-10">
+                        <img id="question-image" src="" alt="Tebak Gambar" class="image-animate max-h-full max-w-full rounded-2xl shadow-xl border-4 border-white object-contain bg-white">
+                    </div>
+
+                    <p id="question-clue" class="relative z-10 text-2xl font-bold text-[#1B5E20] text-center leading-snug bg-white/95 px-6 py-3 rounded-xl border-2 border-[#A5D6A7] shadow-sm">"..."</p>
+                </div>
+
+                <!-- Card Kanan -->
+                <div class="w-1/2 h-full flex items-center justify-center">
+                    <div id="options-container" class="grid grid-cols-1 gap-5 w-full">
+                        <!-- Buttons injected via JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Halaman Hasil -->
+        <div id="result-screen" class="hidden h-full flex flex-col items-center justify-center space-y-6 z-20">
+            <div id="result-emoji" class="text-9xl animate-bounce drop-shadow-xl">🌻</div>
+            
+            <div class="text-center space-y-4 bg-white/80 p-8 rounded-[40px] border-8 border-[#2E7D32] shadow-2xl transform rotate-1">
+                <h2 class="text-5xl font-black text-[#1B5E20]">Penelitian Selesai!</h2>
+                
+                <div class="py-4">
+                    <p class="text-[#2E7D32] text-2xl font-bold uppercase tracking-wider">Nilai Kamu</p>
+                    <div class="text-8xl font-black text-[#00E676] my-2 drop-shadow-md">
+                        <span id="final-score">0</span>
+                    </div>
+                    <p id="result-message" class="text-3xl font-bold text-[#FF6D00]">Luar Biasa!</p>
+                </div>
+            </div>
+
+            <div class="flex gap-6 mt-4">
+                <button onclick="restartGame()" class="px-8 py-4 bg-[#FF4081] border-b-8 border-[#C51162] text-white rounded-3xl font-black text-2xl transition hover:-translate-y-1 active:border-b-0 active:translate-y-2">
+                    <i class="fas fa-redo mr-3"></i> Uji Coba Lagi
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- DATA 40 SOAL SAINS BAB 1 (BAGIAN TUBUH TUMBUHAN) ---
+        const getImage = (keyword) => `https://tse2.mm.bing.net/th?q=${keyword}&w=400&h=400&c=7&rs=1&p=0`;
+
+        const questions = [
+            // BAGIAN TUBUH & FUNGSI (Hal 2-5)
+            { image: getImage("Plant Roots Underground"), clue: "Aku berada di dalam tanah dan menyerap air.", correct: "Akar", options: ["Akar", "Batang", "Daun"] },
+            { image: getImage("Tree Roots Strong"), clue: "Fungsi akar selain menyerap air adalah...", correct: "Menopang Tanaman", options: ["Menopang Tanaman", "Membuat Makanan", "Menarik Serangga"] },
+            { image: getImage("Plant Stem Water Transport"), clue: "Aku mengangkut air dari akar ke seluruh tubuh seperti pipa.", correct: "Batang", options: ["Batang", "Akar", "Bunga"] },
+            { image: getImage("Celery Experiment Food Coloring"), clue: "Percobaan seledri berubah warna membuktikan batang berfungsi...", correct: "Mengangkut Air", options: ["Mengangkut Air", "Menyimpan Makanan", "Bernapas"] },
+            { image: getImage("Green Leaf Photosynthesis"), clue: "Aku adalah 'dapur' tempat tumbuhan memasak makanan.", correct: "Daun", options: ["Daun", "Akar", "Bunga"] },
+            { image: getImage("Chlorophyll Cells"), clue: "Zat hijau pada daun yang menangkap sinar matahari.", correct: "Klorofil", options: ["Klorofil", "Vitamin", "Oksigen"] },
+            
+            // FOTOSINTESIS (Hal 9-13)
+            { image: getImage("Photosynthesis Process Diagram"), clue: "Proses tumbuhan membuat makanan dengan bantuan cahaya.", correct: "Fotosintesis", options: ["Fotosintesis", "Respirasi", "Penyerbukan"] },
+            { image: getImage("Sun and Plant"), clue: "Energi utama yang dibutuhkan untuk fotosintesis.", correct: "Cahaya Matahari", options: ["Cahaya Matahari", "Listrik", "Api"] },
+            { image: getImage("Carbon Dioxide Gas"), clue: "Gas yang diserap tumbuhan dari udara untuk fotosintesis.", correct: "Karbon Dioksida", options: ["Karbon Dioksida", "Oksigen", "Nitrogen"] },
+            { image: getImage("Oxygen Release Plant"), clue: "Gas yang dihasilkan tumbuhan dan kita hirup.", correct: "Oksigen", options: ["Oksigen", "Karbon Dioksida", "Asap"] },
+            { image: getImage("Plant Starch Food"), clue: "Hasil makanan dari fotosintesis adalah...", correct: "Karbohidrat", options: ["Karbohidrat", "Tanah", "Garam"] },
+            { image: getImage("Plant in Dark Box"), clue: "Tanaman di tempat gelap layu karena...", correct: "Kurang Cahaya", options: ["Kurang Cahaya", "Kurang Air", "Kurang Pupuk"] },
+            
+            // PERKEMBANGBIAKAN (Hal 15-20)
+            { image: getImage("Beautiful Flower"), clue: "Alat perkembangbiakan pada tumbuhan.", correct: "Bunga", options: ["Bunga", "Daun", "Akar"] },
+            { image: getImage("Flower Petals"), clue: "Bagian bunga berwarna-warni untuk menarik serangga.", correct: "Mahkota Bunga", options: ["Mahkota Bunga", "Kelopak", "Tangkai"] },
+            { image: getImage("Stamen Flower"), clue: "Alat kelamin jantan pada bunga.", correct: "Benang Sari", options: ["Benang Sari", "Putik", "Mahkota"] },
+            { image: getImage("Pistil Flower"), clue: "Alat kelamin betina pada bunga.", correct: "Putik", options: ["Putik", "Benang Sari", "Kelopak"] },
+            { image: getImage("Bee Pollination"), clue: "Peristiwa jatuhnya serbuk sari ke kepala putik.", correct: "Penyerbukan", options: ["Penyerbukan", "Fotosintesis", "Penyebaran"] },
+            { image: getImage("Fruit with Seeds"), clue: "Setelah penyerbukan, bunga berkembang menjadi...", correct: "Biji & Buah", options: ["Biji & Buah", "Daun", "Akar"] },
+            { image: getImage("Mango Fruit Flesh"), clue: "Daging buah berfungsi untuk...", correct: "Melindungi Biji", options: ["Melindungi Biji", "Hiasan", "Bernapas"] },
+            { image: getImage("Germinating Seed"), clue: "Biji adalah cikal bakal...", correct: "Tumbuhan Baru", options: ["Tumbuhan Baru", "Pupuk", "Tanah"] },
+
+            // PENYEBARAN BIJI (Hal 23-26)
+            { image: getImage("Dandelion Seeds Wind"), clue: "Biji Dandelion menyebar dengan bantuan...", correct: "Angin", options: ["Angin", "Air", "Hewan"] },
+            { image: getImage("Coconut Floating"), clue: "Buah kelapa menyebar dengan cara mengapung di...", correct: "Air", options: ["Air", "Udara", "Tanah"] },
+            { image: getImage("Civet Coffee"), clue: "Luwak membantu menyebarkan biji kopi melalui...", correct: "Kotoran", options: ["Kotoran", "Bulu", "Muntahan"] },
+            { image: getImage("Burrs on Dog Fur"), clue: "Biji berduri menempel pada bulu hewan agar...", correct: "Terbawa Jauh", options: ["Terbawa Jauh", "Dimakan", "Hancur"] },
+            { image: getImage("Farmer Planting Seeds"), clue: "Manusia membantu penyebaran biji dengan cara...", correct: "Menanam", options: ["Menanam", "Memasak", "Membuang"] },
+            
+            // CADANGAN MAKANAN (Hal 12)
+            { image: getImage("Carrot in Soil"), clue: "Wortel menyimpan cadangan makanan di...", correct: "Akar", options: ["Akar", "Batang", "Daun"] },
+            { image: getImage("Cassava Plant"), clue: "Singkong adalah contoh tanaman umbi...", correct: "Akar", options: ["Akar", "Batang", "Lapis"] },
+            { image: getImage("Sugar Cane"), clue: "Tebu menyimpan rasa manis (gula) di...", correct: "Batang", options: ["Batang", "Akar", "Daun"] },
+            { image: getImage("Potato Plant"), clue: "Kentang menyimpan makanan di...", correct: "Umbi Batang", options: ["Umbi Batang", "Umbi Akar", "Buah"] },
+            { image: getImage("Corn Seeds"), clue: "Jagung menyimpan cadangan makanan di...", correct: "Biji", options: ["Biji", "Batang", "Akar"] },
+
+            // FUNGSI KHUSUS
+            { image: getImage("Cactus Spines"), clue: "Duri pada kaktus sebenarnya adalah...", correct: "Daun", options: ["Daun", "Batang", "Akar"] },
+            { image: getImage("Rose Thorns"), clue: "Duri pada mawar berfungsi untuk...", correct: "Melindungi Diri", options: ["Melindungi Diri", "Menarik Serangga", "Menyerap Air"] },
+            { image: getImage("Banyan Tree Roots"), clue: "Akar gantung pada pohon beringin berfungsi untuk...", correct: "Bernapas", options: ["Bernapas", "Fotosintesis", "Menyimpan Air"] },
+            { image: getImage("Stomata Microscope"), clue: "Lubang kecil di daun untuk keluar masuk udara.", correct: "Stomata", options: ["Stomata", "Pori-pori", "Lentisel"] },
+            { image: getImage("Sunflower Facing Sun"), clue: "Bunga matahari selalu menghadap ke...", correct: "Cahaya Matahari", options: ["Cahaya Matahari", "Bulan", "Tanah"] },
+            { image: getImage("Water Lily Pad"), clue: "Daun Teratai lebar agar mudah...", correct: "Menguapkan Air", options: ["Menguapkan Air", "Tenggelam", "Menyimpan Air"] },
+            { image: getImage("Venus Flytrap"), clue: "Tumbuhan ini memakan serangga karena tanahnya kurang...", correct: "Nitrogen", options: ["Nitrogen", "Air", "Cahaya"] },
+            { image: getImage("Pitcher Plant"), clue: "Kantong semar menangkap serangga menggunakan...", correct: "Cairan Nektar", options: ["Cairan Nektar", "Duri", "Jaring"] },
+            { image: getImage("Bamboo Shoot"), clue: "Tunas bambu (rebung) tumbuh dari...", correct: "Akar Rimpang", options: ["Akar Rimpang", "Biji", "Daun"] },
+            { image: getImage("Mushroom Fungus"), clue: "Jamur bukan tumbuhan karena tidak memiliki...", correct: "Klorofil", options: ["Klorofil", "Akar", "Batang"] }
+        ];
+
+        // --- Variabel Game ---
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let shuffledQuestions = [];
+        let canAnswer = false;
+        
+        let timerInterval;
+        let readingTimeout;
+        const THINKING_TIME = 8; // Waktu mikir 8 detik
+        const READING_TIME = 5;  // Waktu baca 5 detik
+
+        // --- DOM Elements ---
+        const startScreen = document.getElementById('start-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const questionImage = document.getElementById('question-image');
+        const questionClue = document.getElementById('question-clue');
+        const optionsContainer = document.getElementById('options-container');
+        const finalScoreEl = document.getElementById('final-score');
+        const resultMsgEl = document.getElementById('result-message');
+        const appContainer = document.getElementById('app-container');
+        const timerBar = document.getElementById('timer-bar');
+        const transitionScreen = document.getElementById('transition-screen');
+        const transitionEmoji = document.getElementById('transition-emoji');
+        const transitionText = document.getElementById('transition-text');
+
+        // --- Fungsi Audio ---
+        function speakClue(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'id-ID';
+                utterance.rate = 0.9;
+                utterance.pitch = 1.0;
+                utterance.volume = 1.0;
+                const voices = window.speechSynthesis.getVoices();
+                const googleVoice = voices.find(v => v.lang === 'id-ID' && v.name.includes('Google'));
+                if (googleVoice) utterance.voice = googleVoice;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function stopSpeaking() {
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+        }
+
+        function playSound(type) {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+                const now = ctx.currentTime;
+
+                if (type === 'correct') {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(600, now);
+                    osc.frequency.exponentialRampToValueAtTime(1000, now + 0.1);
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                    osc.start(now);
+                    osc.stop(now + 0.5);
+                } else if (type === 'wrong') {
+                    const osc1 = ctx.createOscillator();
+                    const gain1 = ctx.createGain();
+                    osc1.connect(gain1);
+                    gain1.connect(ctx.destination);
+                    osc1.type = 'sine';
+                    osc1.frequency.setValueAtTime(440, now); 
+                    gain1.gain.setValueAtTime(0.2, now);
+                    gain1.gain.linearRampToValueAtTime(0.01, now + 0.15);
+                    osc1.start(now);
+                    osc1.stop(now + 0.15);
+
+                    const osc2 = ctx.createOscillator();
+                    const gain2 = ctx.createGain();
+                    osc2.connect(gain2);
+                    gain2.connect(ctx.destination);
+                    osc2.type = 'sine';
+                    osc2.frequency.setValueAtTime(349, now + 0.2); 
+                    osc2.frequency.linearRampToValueAtTime(330, now + 0.5); 
+                    gain2.gain.setValueAtTime(0.2, now + 0.2);
+                    gain2.gain.linearRampToValueAtTime(0.01, now + 0.5);
+                    osc2.start(now + 0.2);
+                    osc2.stop(now + 0.5);
+                } else if (type === 'pop') {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.frequency.setValueAtTime(800, now);
+                    osc.frequency.exponentialRampToValueAtTime(100, now + 0.1);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                    osc.start(now);
+                    osc.stop(now + 0.1);
+                } else if (type === 'tick') {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.frequency.setValueAtTime(1000, now);
+                    gain.gain.setValueAtTime(0.3, now); 
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+                    osc.start(now);
+                    osc.stop(now + 0.05);
+                }
+            } catch (e) {}
+        }
+
+        // --- Logika Game ---
+        function startGame() {
+            if ('speechSynthesis' in window) window.speechSynthesis.getVoices();
+            shuffledQuestions = questions.sort(() => 0.5 - Math.random()); 
+            currentQuestionIndex = 0;
+            score = 0;
+            
+            startScreen.classList.add('hidden');
+            resultScreen.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+            loadQuestion();
+            playSound('pop');
+        }
+
+        function playTransition() {
+            const emojis = ["🌱", "🌿", "🌳", "🌻", "🍂", "🍃"];
+            transitionEmoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            
+            const spiritPhrases = [
+                "SIAP-SIAP...",
+                "KAMU ILMUWAN!",
+                "HEBAT SEKALI!",
+                "LANJUT PENELITIAN!",
+                "SEMANGAT YA!",
+                "FOKUS BELAJAR!"
+            ];
+            const selectedPhrase = spiritPhrases[Math.floor(Math.random() * spiritPhrases.length)];
+            transitionText.textContent = selectedPhrase;
+            speakClue(selectedPhrase);
+
+            transitionScreen.classList.remove('translate-x-full');
+            transitionScreen.classList.add('translate-x-0');
+            playSound('pop');
+
+            setTimeout(() => {
+                loadQuestion();
+                setTimeout(() => {
+                    transitionScreen.classList.remove('translate-x-0');
+                    transitionScreen.classList.add('-translate-x-full');
+                    setTimeout(() => {
+                        transitionScreen.classList.remove('transition-transform');
+                        transitionScreen.classList.remove('-translate-x-full');
+                        transitionScreen.classList.add('translate-x-full');
+                        void transitionScreen.offsetWidth;
+                        transitionScreen.classList.add('transition-transform');
+                    }, 500);
+                }, 1000);
+            }, 600);
+        }
+
+        function loadQuestion() {
+            clearInterval(timerInterval);
+            clearTimeout(readingTimeout);
+            canAnswer = false;
+            
+            const q = shuffledQuestions[currentQuestionIndex];
+            
+            questionImage.classList.remove('image-animate');
+            void questionImage.offsetWidth; 
+            questionImage.classList.add('image-animate');
+            
+            timerBar.style.width = '100%';
+            timerBar.style.backgroundColor = '#00C853';
+
+            questionImage.src = q.image;
+            questionClue.textContent = q.clue;
+            
+            renderOptions(q);
+
+            setTimeout(() => {
+                // UPDATE: Menambahkan "Siapakah aku?" di akhir soal
+                speakClue(q.clue + " Siapakah aku?");
+            }, 800);
+
+            readingTimeout = setTimeout(() => {
+                startThinkingTimer();
+            }, READING_TIME * 1000);
+        }
+
+        function startThinkingTimer() {
+            canAnswer = true;
+            playSound('pop');
+            let timeLeft = THINKING_TIME;
+            const updateRate = 50; 
+            const totalSteps = (THINKING_TIME * 1000) / updateRate;
+            let currentStep = 0;
+            let lastTickStep = 0;
+
+            timerInterval = setInterval(() => {
+                currentStep++;
+                const percentage = 100 - ((currentStep / totalSteps) * 100);
+                timerBar.style.width = `${percentage}%`;
+                
+                let tickInterval = 20; 
+                
+                if (percentage < 30) {
+                    timerBar.style.backgroundColor = '#D50000'; 
+                    tickInterval = 4; // Cepat
+                } else if (percentage < 60) {
+                    timerBar.style.backgroundColor = '#FFD600'; 
+                    tickInterval = 10; // Sedang
+                } else {
+                    timerBar.style.backgroundColor = '#00C853'; 
+                    tickInterval = 20; // Lambat
+                }
+
+                if (currentStep - lastTickStep >= tickInterval) {
+                    playSound('tick');
+                    lastTickStep = currentStep;
+                }
+
+                if (currentStep >= totalSteps) {
+                    clearInterval(timerInterval);
+                    handleTimeOut();
+                }
+            }, updateRate);
+        }
+
+        function handleTimeOut() {
+            canAnswer = false;
+            appContainer.classList.add('shake');
+            playSound('wrong');
+            setTimeout(() => appContainer.classList.remove('shake'), 600);
+
+            const q = shuffledQuestions[currentQuestionIndex];
+            // UPDATE: Membacakan jawaban yang benar
+            setTimeout(() => speakClue("Jawabannya adalah " + q.correct), 500);
+
+            const allBtns = optionsContainer.querySelectorAll('button');
+            allBtns.forEach(btn => {
+                if (btn.textContent.includes(q.correct)) {
+                    btn.classList.add('ring-4', 'ring-[#00C853]', 'scale-105', 'bg-[#00C853]', 'text-white');
+                    btn.className = btn.className.replace(/bg-white/, 'bg-[#00C853]').replace(/border-gray-200/, 'border-[#00E676]');
+                } else {
+                    btn.style.opacity = '0.5';
+                }
+            });
+
+            setTimeout(nextQuestion, 3500);
+        }
+
+        function renderOptions(q) {
+            optionsContainer.innerHTML = '';
+            const options = [...q.options].sort(() => 0.5 - Math.random());
+            
+            // Warna tombol nuansa Hijau/Alam (Teal, Green, Lime)
+            const colors = [
+                { bg: 'bg-[#009688]', border: 'border-[#00796B]', hover: 'hover:bg-[#4DB6AC]' },
+                { bg: 'bg-[#43A047]', border: 'border-[#2E7D32]', hover: 'hover:bg-[#66BB6A]' },
+                { bg: 'bg-[#827717]', border: 'border-[#9E9D24]', hover: 'hover:bg-[#AFB42B]' }
+            ];
+
+            options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                const color = colors[index % colors.length];
+                btn.className = `btn-option w-full py-5 px-8 ${color.bg} border-b-[6px] ${color.border} text-white rounded-3xl text-2xl font-black ${color.hover} flex items-center shadow-lg active:border-b-0 active:translate-y-2 group`;
+                const labels = ["A", "B", "C"];
+                btn.innerHTML = `
+                    <span class="bg-white text-gray-700 w-12 h-12 flex items-center justify-center rounded-full text-2xl font-black mr-6 shadow-sm group-hover:scale-110 transition">${labels[index]}</span>
+                    <span class="flex-grow text-left text-shadow-sm text-2xl">${opt}</span>
+                `;
+                btn.onclick = () => checkAnswer(btn, opt, q.correct);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(btn, selected, correct) {
+            if (!canAnswer) return; 
+            canAnswer = false;
+            clearInterval(timerInterval); 
+            stopSpeaking(); 
+
+            const allBtns = optionsContainer.querySelectorAll('button');
+
+            if (selected === correct) {
+                btn.innerHTML = `<span class="w-full text-center text-3xl">🎉 BENAR!</span>`;
+                btn.className = `w-full py-5 bg-[#00C853] border-b-[6px] border-[#0097A7] text-white rounded-3xl text-2xl font-black shadow-lg transform scale-105`;
+                score += 10; 
+                playSound('correct');
+                fireConfetti(); 
+            } else {
+                btn.innerHTML = `<span class="w-full text-center text-3xl">❌ SALAH!</span>`;
+                btn.className = `w-full py-5 bg-[#FF1744] border-b-[6px] border-[#D50000] text-white rounded-3xl text-2xl font-black shadow-lg`;
+                appContainer.classList.add('shake');
+                playSound('wrong');
+                setTimeout(() => appContainer.classList.remove('shake'), 600);
+                allBtns.forEach(b => {
+                    if (b.textContent.includes(correct)) {
+                        b.classList.add('ring-4', 'ring-white', 'scale-105');
+                    }
+                });
+            }
+            setTimeout(nextQuestion, 2000);
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < shuffledQuestions.length) {
+                playTransition();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            gameScreen.classList.add('hidden');
+            resultScreen.classList.remove('hidden');
+            finalScoreEl.textContent = score;
+            playSound('pop');
+            
+            const maxScore = shuffledQuestions.length * 10;
+            const percentage = (score / maxScore) * 100;
+
+            if (percentage === 100) {
+                resultMsgEl.textContent = "Professor Botani! Sempurna! 🌱👑";
+                fireConfetti(true);
+            } else if (percentage >= 60) {
+                resultMsgEl.textContent = "Hebat! Peneliti Cilik! 🌿";
+                fireConfetti(true);
+            } else {
+                resultMsgEl.textContent = "Ayo Tanam Pohon Lagi! 🌳";
+            }
+        }
+
+        function restartGame() {
+            startGame();
+        }
+
+        function fireConfetti(long = false) {
+            var duration = long ? 3 * 1000 : 0.5 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100 };
+            var random = function(min, max) { return Math.random() * (max - min) + min; }
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) return clearInterval(interval);
+                var particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: random(0.1, 0.3), y: Math.random() - 0.2 }, colors: ['#2E7D32', '#00E676', '#FFD600', '#FFFFFF'] }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: random(0.7, 0.9), y: Math.random() - 0.2 }, colors: ['#2E7D32', '#00E676', '#FFD600', '#FFFFFF'] }));
+            }, 250);
+        }
+    </script>
+</body>
+</html>

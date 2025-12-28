@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thumbnail Bagian Tumbuhan</title>
+    <title>Thumbnail Gaya Spesial</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -24,8 +24,8 @@
             height: 720px;
             position: relative;
             overflow: hidden;
-            /* Background Alam Segar */
-            background: linear-gradient(135deg, #43A047 0%, #66BB6A 50%, #A5D6A7 100%);
+            /* Background Energi Dinamis */
+            background: linear-gradient(135deg, #FF6F00 0%, #FFCA28 50%, #FF6F00 100%);
             box-shadow: 0 0 50px rgba(0,0,0,0.5);
             display: flex;
             flex-direction: column;
@@ -33,13 +33,13 @@
             justify-content: center;
         }
 
-        /* Pattern Daun di Background */
-        .leaf-bg {
+        /* Pattern Gear/Mesin di Background */
+        .gear-bg {
             position: absolute;
             width: 100%;
             height: 100%;
             background-image: radial-gradient(circle, rgba(255,255,255,0.15) 10%, transparent 10%);
-            background-size: 60px 60px;
+            background-size: 40px 40px;
             z-index: 1;
         }
 
@@ -48,12 +48,12 @@
             position: absolute;
             width: 900px;
             height: 900px;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, transparent 70%);
             border-radius: 50%;
             z-index: 2;
         }
 
-        /* Teks Judul dengan Efek 3D */
+        /* Teks Judul dengan Efek 3D Kuat */
         .title-container {
             z-index: 20;
             text-align: center;
@@ -62,21 +62,27 @@
         }
 
         .title-main {
-            font-size: 110px;
+            font-size: 130px;
             line-height: 0.9;
-            color: #FFEB3B; /* Kuning Cerah */
-            -webkit-text-stroke: 6px #1B5E20; /* Hijau Tua */
+            color: #0288D1; /* Biru Laut */
+            -webkit-text-stroke: 6px #FFFFFF;
             text-shadow: 
-                8px 8px 0px #2E7D32, 
+                8px 8px 0px #01579B, 
                 15px 15px 0px rgba(0,0,0,0.3);
         }
 
         .title-sub {
-            font-size: 70px;
-            color: #FFFFFF;
-            -webkit-text-stroke: 4px #004D40;
-            text-shadow: 6px 6px 0px #00695C;
+            font-size: 60px;
+            color: #D32F2F; /* Merah Bata */
+            -webkit-text-stroke: 3px #FFFFFF;
+            text-shadow: 5px 5px 0px #B71C1C;
             margin-top: 10px;
+            background: #FFF;
+            padding: 5px 30px;
+            border-radius: 50px;
+            display: inline-block;
+            transform: rotate(2deg);
+            box-shadow: 0 10px 0 rgba(0,0,0,0.1);
         }
 
         /* Badge Kelas */
@@ -84,7 +90,7 @@
             position: absolute;
             top: 40px;
             left: 40px;
-            background: #FF5722; /* Oranye */
+            background: #2E7D32; /* Hijau */
             color: white;
             padding: 15px 40px;
             font-size: 35px;
@@ -100,7 +106,7 @@
             position: absolute;
             top: 40px;
             right: 40px;
-            background: #0288D1; /* Biru */
+            background: #D84315; /* Oranye Kemerahan */
             color: white;
             width: 220px;
             height: 220px;
@@ -115,15 +121,15 @@
             z-index: 30;
         }
 
-        /* Ikon Bagian Tumbuhan */
+        /* Ikon Gaya */
         .icon-container {
             display: flex;
-            gap: 40px;
+            gap: 50px;
             margin-top: 50px;
             z-index: 20;
         }
 
-        .part-card {
+        .force-card {
             background: rgba(255, 255, 255, 0.95);
             padding: 20px;
             border-radius: 30px;
@@ -134,19 +140,19 @@
             transition: transform 0.3s;
         }
 
-        .part-card.flower { border-color: #E91E63; transform: rotate(-8deg); }
-        .part-card.leaf { border-color: #43A047; transform: translateY(-20px); }
-        .part-card.root { border-color: #795548; transform: rotate(8deg); }
+        .force-card.magnet { border-color: #D32F2F; transform: rotate(-8deg); }
+        .force-card.push { border-color: #F57C00; transform: translateY(-20px); }
+        .force-card.gravity { border-color: #1976D2; transform: rotate(8deg); }
 
-        .part-emoji {
+        .force-emoji {
             font-size: 80px;
             display: block;
             margin-bottom: 5px;
             filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2));
         }
 
-        .part-label {
-            font-size: 30px;
+        .force-label {
+            font-size: 28px;
             font-weight: 900;
             text-transform: uppercase;
             color: #333;
@@ -171,7 +177,7 @@
 <body>
 
     <div id="thumbnail">
-        <div class="leaf-bg"></div>
+        <div class="gear-bg"></div>
         <div class="glow-circle"></div>
 
         <!-- Badge -->
@@ -186,34 +192,34 @@
 
         <!-- Judul -->
         <div class="title-container">
-            <div class="title-sub font-black">KUIS SAINS</div>
-            <div class="title-main font-black">BAGIAN<br>TUMBUHAN</div>
+            <div class="title-main font-black">GAYA</div>
+            <div class="title-sub font-black">DI SEKITAR KITA</div>
         </div>
 
-        <!-- Kartu Bagian Tumbuhan -->
+        <!-- Kartu Gaya -->
         <div class="icon-container">
-            <!-- Bunga -->
-            <div class="part-card flower">
-                <span class="part-emoji">🌸</span>
-                <span class="part-label">Bunga</span>
+            <!-- Magnet -->
+            <div class="force-card magnet">
+                <span class="force-emoji">🧲</span>
+                <span class="force-label">Magnet</span>
             </div>
-            <!-- Daun -->
-            <div class="part-card leaf">
-                <span class="part-emoji">🍃</span>
-                <span class="part-label">Daun</span>
+            <!-- Dorong/Otot -->
+            <div class="force-card push">
+                <span class="force-emoji">💪</span>
+                <span class="force-label">Otot</span>
             </div>
-            <!-- Akar -->
-            <div class="part-card root">
-                <span class="part-emoji">🥕</span>
-                <span class="part-label">Akar</span>
+            <!-- Gravitasi -->
+            <div class="force-card gravity">
+                <span class="force-emoji">🍎</span>
+                <span class="force-label">Gravitasi</span>
             </div>
         </div>
 
         <!-- Dekorasi -->
-        <div class="deco" style="top: 200px; left: 80px; animation-delay: 0s;">☀️</div>
-        <div class="deco" style="bottom: 150px; right: 100px; animation-delay: 1s;">🌱</div>
-        <div class="deco" style="top: 150px; right: 350px; font-size: 60px; animation-delay: 2s;">💧</div>
-        <div class="deco" style="bottom: 80px; left: 300px; font-size: 60px; animation-delay: 1.5s;">🍄</div>
+        <div class="deco" style="top: 220px; left: 100px; animation-delay: 0s;">⚡</div>
+        <div class="deco" style="bottom: 150px; right: 100px; animation-delay: 1s;">🚲</div>
+        <div class="deco" style="top: 150px; right: 350px; font-size: 60px; animation-delay: 2s;">⚽</div>
+        <div class="deco" style="bottom: 80px; left: 300px; font-size: 60px; animation-delay: 1.5s;">🪁</div>
 
     </div>
 

@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Gaya di Sekitar Kita (Spesial)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Fredoka untuk kesan anak-anak -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+    <!-- Confetti Effect -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Fredoka', sans-serif;
+            /* Background Dinamis (Energi: Biru ke Oranye) */
+            background: linear-gradient(135deg, #2980b9 0%, #f39c12 100%);
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            color: #333;
+        }
+
+        /* Container Kartu Besar */
+        #app-container {
+            aspect-ratio: 16/9;
+            width: 90vw;
+            max-width: 1280px;
+            max-height: 90vh;
+            background: #FFF3E0; /* Krem Oranye Muda */
+            border-radius: 40px;
+            box-shadow: 0 20px 0 #d35400, 0 30px 40px rgba(0,0,0,0.5); /* Efek 3D Oranye Tua */
+            border: 8px solid #FFF;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Dekorasi Ikon Melayang */
+        .floating-icon {
+            position: absolute;
+            font-size: 3rem;
+            animation: floatUp 15s linear infinite;
+            opacity: 0.3;
+            z-index: 0;
+            bottom: -50px;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.3; }
+            100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* Tombol Jawaban "Jelly" */
+        .btn-option {
+            font-family: 'Nunito', sans-serif;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            top: 0;
+        }
+        
+        .btn-option:hover {
+            transform: translateY(-4px);
+            filter: brightness(1.1);
+        }
+
+        .btn-option:active {
+            transform: translateY(2px);
+            box-shadow: none !important;
+        }
+
+        /* Animasi Gambar Masuk */
+        @keyframes popInImage {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .image-animate {
+            animation: popInImage 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        /* Shake kalau salah */
+        @keyframes wobble {
+            0%, 100% { transform: translateX(0) rotate(0); }
+            15% { transform: translateX(-15px) rotate(-5deg); }
+            30% { transform: translateX(10px) rotate(3deg); }
+            45% { transform: translateX(-10px) rotate(-3deg); }
+            60% { transform: translateX(5px) rotate(2deg); }
+        }
+        .shake {
+            animation: wobble 0.6s ease-in-out;
+        }
+
+        /* Timer Bar Animation */
+        .timer-container {
+            width: 100%;
+            height: 24px;
+            background: #e0e0e0;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            border: 3px solid #fff;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+        }
+        
+        .timer-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #2ecc71, #f1c40f, #e74c3c);
+            background-size: 200% 100%;
+            width: 100%;
+            transform-origin: left;
+            transition: width 0.1s linear;
+        }
+
+        /* Styling untuk Layar Transisi */
+        .pattern-bg {
+            background-image: radial-gradient(#ffffff 15%, transparent 15%);
+            background-size: 40px 40px;
+            opacity: 0.2;
+        }
+        
+        /* Background Konten Kiri (Pola Gear) */
+        .gear-pattern {
+             background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d35400' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Dekorasi Floating Icons (Tema Gaya) -->
+    <div class="floating-icon" style="left: 10%; animation-duration: 12s; animation-delay: 0s;">🧲</div>
+    <div class="floating-icon" style="left: 25%; animation-duration: 15s; animation-delay: 2s;">⚽</div>
+    <div class="floating-icon" style="left: 45%; animation-duration: 10s; animation-delay: 5s;">🚲</div>
+    <div class="floating-icon" style="left: 60%; animation-duration: 18s; animation-delay: 1s;">🏹</div>
+    <div class="floating-icon" style="left: 80%; animation-duration: 14s; animation-delay: 3s;">🍎</div>
+    <div class="floating-icon" style="left: 90%; animation-duration: 11s; animation-delay: 6s;">🪁</div>
+
+    <div id="app-container" class="flex flex-col p-6 z-10">
+        
+        <!-- TRANSISI LAYER -->
+        <div id="transition-screen" class="absolute inset-0 z-50 flex flex-col items-center justify-center bg-[#e67e22] transition-transform duration-500 translate-x-full shadow-2xl rounded-[32px]">
+            <div class="pattern-bg absolute inset-0"></div>
+            <div id="transition-emoji" class="text-9xl animate-bounce mb-6 drop-shadow-lg z-10">🚀</div>
+            <h2 id="transition-text" class="text-6xl font-black text-white tracking-wider drop-shadow-md z-10 border-4 border-white/20 px-8 py-4 rounded-full bg-white/10 backdrop-blur-sm text-center">
+                SIAP-SIAP...
+            </h2>
+        </div>
+
+        <!-- Halaman Utama (Intro) -->
+        <div id="start-screen" class="h-full flex flex-col items-center justify-center space-y-6 animate-fade-in z-20">
+            <div class="flex items-center space-x-6">
+                <!-- Gunakan gambar asli untuk intro -->
+                <img src="https://tse2.mm.bing.net/th?q=Tug+of+War+Cartoon&w=200&h=200&c=7&rs=1&p=0" class="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover">
+                <img src="https://tse2.mm.bing.net/th?q=Magnet+Attracting+Cartoon&w=200&h=200&c=7&rs=1&p=0" class="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover" style="animation-delay: 0.2s">
+                <img src="https://tse2.mm.bing.net/th?q=Falling+Apple+Newton&w=200&h=200&c=7&rs=1&p=0" class="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover" style="animation-delay: 0.4s">
+            </div>
+            
+            <div class="text-center space-y-4 bg-white/50 p-6 rounded-[30px] backdrop-blur-sm border-4 border-white">
+                <h1 class="text-6xl font-black text-[#d35400] tracking-wide" style="text-shadow: 3px 3px 0 #FFF;">
+                    Kuis Gaya Seru!
+                </h1>
+                <p class="text-2xl text-[#e67e22] font-bold">Gaya di Sekitar Kita (Kelas 4)</p>
+            </div>
+
+            <button onclick="startGame()" class="mt-4 px-12 py-5 bg-[#2980b9] text-white border-b-[8px] border-[#1f618d] rounded-full font-black text-3xl shadow-xl hover:bg-[#3498db] transition transform hover:scale-105 active:border-b-0 active:translate-y-2">
+                MULAI PETUALANGAN! ▶️
+            </button>
+        </div>
+
+        <!-- Halaman Gameplay -->
+        <div id="game-screen" class="hidden h-full flex flex-col z-20">
+            <div class="text-center pt-2 pb-2">
+                <h2 class="text-5xl font-black text-[#c0392b] tracking-wider uppercase drop-shadow-sm" style="-webkit-text-stroke: 2px white;">
+                    Gaya di Sekitar Kita
+                </h2>
+            </div>
+
+            <div class="px-6">
+                <div class="timer-container">
+                    <div id="timer-bar" class="timer-bar" style="width: 100%;"></div>
+                </div>
+            </div>
+
+            <div class="flex-grow flex flex-row items-center justify-center gap-8 px-6 pb-6">
+                
+                <!-- Card Kiri (Tempat Gambar) -->
+                <div class="w-1/2 flex flex-col items-center justify-center bg-white border-[6px] border-[#e67e22] border-dashed rounded-[40px] p-6 shadow-sm h-full relative overflow-hidden group">
+                    <div class="absolute inset-0 gear-pattern opacity-50"></div>
+                    
+                    <!-- Container Gambar -->
+                    <div class="relative w-full h-64 flex items-center justify-center mb-4 z-10">
+                        <img id="question-image" src="" alt="Tebak Gambar" class="image-animate max-h-full max-w-full rounded-2xl shadow-xl border-4 border-white object-contain bg-white">
+                    </div>
+
+                    <p id="question-clue" class="relative z-10 text-2xl font-bold text-[#d35400] text-center leading-snug bg-white/95 px-6 py-3 rounded-xl border-2 border-[#f39c12] shadow-sm">"..."</p>
+                </div>
+
+                <!-- Card Kanan -->
+                <div class="w-1/2 h-full flex items-center justify-center">
+                    <div id="options-container" class="grid grid-cols-1 gap-5 w-full">
+                        <!-- Buttons injected via JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Halaman Hasil -->
+        <div id="result-screen" class="hidden h-full flex flex-col items-center justify-center space-y-6 z-20">
+            <div id="result-emoji" class="text-9xl animate-bounce drop-shadow-xl">🏅</div>
+            
+            <div class="text-center space-y-4 bg-white/80 p-8 rounded-[40px] border-8 border-[#d35400] shadow-2xl transform rotate-1">
+                <h2 class="text-5xl font-black text-[#c0392b]">Misi Selesai!</h2>
+                
+                <div class="py-4">
+                    <p class="text-[#e67e22] text-2xl font-bold uppercase tracking-wider">Nilai Kamu</p>
+                    <div class="text-8xl font-black text-[#2980b9] my-2 drop-shadow-md">
+                        <span id="final-score">0</span>
+                    </div>
+                    <p id="result-message" class="text-3xl font-bold text-[#f39c12]">Luar Biasa!</p>
+                </div>
+            </div>
+
+            <div class="flex gap-6 mt-4">
+                <button onclick="restartGame()" class="px-8 py-4 bg-[#27ae60] border-b-8 border-[#1e8449] text-white rounded-3xl font-black text-2xl transition hover:-translate-y-1 active:border-b-0 active:translate-y-2">
+                    <i class="fas fa-redo mr-3"></i> Uji Coba Lagi
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- DATA 40 SOAL GAYA (BAB 3) ---
+        const getImage = (keyword) => `https://tse2.mm.bing.net/th?q=${keyword}&w=400&h=400&c=7&rs=1&p=0`;
+
+        const questions = [
+            // GAYA OTOT & DASAR (Hal 64-67)
+            { image: getImage("Pushing Heavy Box"), clue: "Tarikan atau dorongan yang diberikan pada suatu benda.", correct: "Gaya", options: ["Gaya", "Energi", "Daya"] },
+            { image: getImage("Arm Muscle Man"), clue: "Gaya yang dihasilkan oleh tubuh manusia atau hewan.", correct: "Gaya Otot", options: ["Gaya Otot", "Gaya Pegas", "Gaya Magnet"] },
+            { image: getImage("Pushing Car Cartoon"), clue: "Saat mendorong mobil mogok, kita menggunakan gaya...", correct: "Otot", options: ["Otot", "Magnet", "Gravitasi"] },
+            { image: getImage("Pottery Making"), clue: "Menekan tanah liat menjadi kerajinan membuktikan gaya dapat...", correct: "Mengubah Bentuk", options: ["Mengubah Bentuk", "Mengubah Warna", "Menghilangkan Benda"] },
+            { image: getImage("Kicking Soccer Ball"), clue: "Menendang bola diam menjadi melaju membuktikan gaya dapat...", correct: "Mengubah Benda Diam Jadi Bergerak", options: ["Mengubah Benda Diam Jadi Bergerak", "Mengubah Bentuk", "Mengurangi Berat"] },
+            { image: getImage("Goalkeeper Catching"), clue: "Kiper menangkap bola yang melaju kencang. Gaya dapat...", correct: "Menghentikan Benda", options: ["Menghentikan Benda", "Mempercepat Benda", "Mengubah Warna"] },
+            { image: getImage("Heading Football"), clue: "Menyundul bola yang datang ke arah gawang membuktikan gaya dapat...", correct: "Mengubah Arah Gerak", options: ["Mengubah Arah Gerak", "Mengubah Bentuk", "Memperberat Benda"] },
+
+            // GAYA GESEK (Hal 68-75)
+            { image: getImage("Friction Force Diagram"), clue: "Gaya yang muncul karena dua permukaan benda bersentuhan.", correct: "Gaya Gesek", options: ["Gaya Gesek", "Gaya Magnet", "Gaya Pegas"] },
+            { image: getImage("Rough Road Surface"), clue: "Semakin kasar permukaan benda, maka gaya geseknya semakin...", correct: "Besar", options: ["Besar", "Kecil", "Hilang"] },
+            { image: getImage("Bicycle Brake Pads"), clue: "Rem sepeda bekerja dengan memanfaatkan gaya...", correct: "Gesek", options: ["Gesek", "Magnet", "Gravitasi"] },
+            { image: getImage("Tire Tread Pattern"), clue: "Alur pada ban kendaraan dibuat untuk... gaya gesek agar tidak selip.", correct: "Memperbesar", options: ["Memperbesar", "Memperkecil", "Menghilangkan"] },
+            { image: getImage("Oiling Bicycle Chain"), clue: "Memberi oli pada rantai sepeda bertujuan untuk...", correct: "Memperkecil Gesekan", options: ["Memperkecil Gesekan", "Memperbesar Gesekan", "Menambah Berat"] },
+            { image: getImage("Suitcase Wheels"), clue: "Roda pada koper berfungsi untuk... gaya gesek.", correct: "Memperkecil", options: ["Memperkecil", "Memperbesar", "Menghapus"] },
+            { image: getImage("Parachute Skydiving"), clue: "Parasut dibuat lebar untuk memperbesar gesekan dengan...", correct: "Udara", options: ["Udara", "Tanah", "Air"] },
+            { image: getImage("Walking on Floor"), clue: "Kita tidak terpeleset saat berjalan karena adanya gaya...", correct: "Gesek", options: ["Gesek", "Pegas", "Magnet"] },
+            { image: getImage("Football Shoes Studs"), clue: "Pul pada sepatu bola gunanya untuk... gaya gesek di rumput.", correct: "Memperbesar", options: ["Memperbesar", "Memperkecil", "Menghilangkan"] },
+            { image: getImage("Bald Tire"), clue: "Kerugian gaya gesek adalah membuat ban menjadi...", correct: "Tipis/Gundul", options: ["Tipis/Gundul", "Tebal", "Kuat"] },
+
+            // GAYA MAGNET (Hal 76-81)
+            { image: getImage("Horseshoe Magnet"), clue: "Benda yang bisa menarik benda lain dari logam besi.", correct: "Magnet", options: ["Magnet", "Karet", "Plastik"] },
+            { image: getImage("North South Magnet"), clue: "Setiap magnet memiliki dua kutub, yaitu...", correct: "Utara & Selatan", options: ["Utara & Selatan", "Barat & Timur", "Atas & Bawah"] },
+            { image: getImage("Magnets Repelling"), clue: "Jika dua kutub yang SAMA (Utara-Utara) didekatkan, maka akan...", correct: "Tolak-menolak", options: ["Tolak-menolak", "Tarik-menarik", "Menempel"] },
+            { image: getImage("Magnets Attracting"), clue: "Jika dua kutub yang BERBEDA (Utara-Selatan) didekatkan, maka akan...", correct: "Tarik-menarik", options: ["Tarik-menarik", "Tolak-menolak", "Diam Saja"] },
+            { image: getImage("Iron Nails Magnet"), clue: "Benda yang dapat ditarik magnet disebut...", correct: "Magnetis", options: ["Magnetis", "Non-magnetis", "Elastis"] },
+            { image: getImage("Pencil Wood"), clue: "Kayu dan plastik termasuk benda...", correct: "Non-magnetis", options: ["Non-magnetis", "Magnetis", "Logam"] },
+            { image: getImage("Magnetic Compass"), clue: "Alat penunjuk arah yang menggunakan gaya magnet.", correct: "Kompas", options: ["Kompas", "Jam", "Termometer"] },
+            { image: getImage("Fridge Door Magnet"), clue: "Pintu kulkas bisa menutup rapat karena ada...", correct: "Magnet", options: ["Magnet", "Lem", "Paku"] },
+            { image: getImage("Paper Clip Magnet"), clue: "Gaya magnet bisa menembus penghalang tipis seperti...", correct: "Kertas", options: ["Kertas", "Tembok Tebal", "Besi Tebal"] },
+            { image: getImage("Screwdriver Magnetic Tip"), clue: "Ujung obeng sering diberi magnet agar bisa memegang...", correct: "Sekrup", options: ["Sekrup", "Kayu", "Kaca"] },
+
+            // GAYA PEGAS (Hal 82-85)
+            { image: getImage("Slinky Spring Toy"), clue: "Gaya yang dihasilkan oleh benda elastis (lentur).", correct: "Gaya Pegas", options: ["Gaya Pegas", "Gaya Gesek", "Gaya Otot"] },
+            { image: getImage("Slingshot Catapult"), clue: "Ketapel melontarkan batu menggunakan gaya...", correct: "Pegas", options: ["Pegas", "Magnet", "Gravitasi"] },
+            { image: getImage("Rubber Band Stretch"), clue: "Benda elastis yang sering dipakai untuk mengikat nasi bungkus.", correct: "Karet Gelang", options: ["Karet Gelang", "Kawat", "Tali Rafia"] },
+            { image: getImage("Kids on Trampoline"), clue: "Alat olahraga melompat yang memanfaatkan gaya pegas.", correct: "Trampolin", options: ["Trampolin", "Matras", "Lantai"] },
+            { image: getImage("Archery Bow Arrow"), clue: "Busur panah yang ditarik menyimpan energi...", correct: "Pegas", options: ["Pegas", "Listrik", "Panas"] },
+            { image: getImage("Motorcycle Shockbreaker"), clue: "Alat pada motor untuk meredam guncangan (per).", correct: "Shockbreaker", options: ["Shockbreaker", "Rem", "Roda"] },
+            { image: getImage("Spring Bed Mattress"), clue: "Kasur yang empuk dan memantul berisi...", correct: "Per/Pegas", options: ["Per/Pegas", "Magnet", "Batu"] },
+
+            // GAYA GRAVITASI (Hal 87-91)
+            { image: getImage("Apple Falling Tree"), clue: "Buah jatuh dari pohon ke bawah karena gaya...", correct: "Gravitasi", options: ["Gravitasi", "Pegas", "Magnet"] },
+            { image: getImage("Earth Core Gravity"), clue: "Pusat gravitasi bumi berada di...", correct: "Inti Bumi", options: ["Inti Bumi", "Langit", "Kutub Utara"] },
+            { image: getImage("Astronaut Zero Gravity"), clue: "Di luar angkasa, astronaut melayang karena tidak ada...", correct: "Gravitasi", options: ["Gravitasi", "Udara", "Cahaya"] },
+            { image: getImage("Throwing Ball Up"), clue: "Bola yang dilempar ke atas pasti akan...", correct: "Jatuh ke Bawah", options: ["Jatuh ke Bawah", "Terus Naik", "Melayang"] },
+            { image: getImage("Crumpled Paper"), clue: "Kertas yang diremas jatuh lebih cepat karena... udara lebih kecil.", correct: "Hambatan", options: ["Hambatan", "Berat", "Gravitasi"] },
+            { image: getImage("Waterfall Nature"), clue: "Air terjun mengalir ke bawah disebabkan oleh...", correct: "Gravitasi", options: ["Gravitasi", "Angin", "Magnet"] }
+        ];
+
+        // --- Variabel Game ---
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let shuffledQuestions = [];
+        let canAnswer = false;
+        
+        let timerInterval;
+        let readingTimeout;
+        const THINKING_TIME = 8; 
+        const READING_TIME = 5;
+
+        // --- DOM Elements ---
+        const startScreen = document.getElementById('start-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const questionImage = document.getElementById('question-image');
+        const questionClue = document.getElementById('question-clue');
+        const optionsContainer = document.getElementById('options-container');
+        const finalScoreEl = document.getElementById('final-score');
+        const resultMsgEl = document.getElementById('result-message');
+        const appContainer = document.getElementById('app-container');
+        const timerBar = document.getElementById('timer-bar');
+        const transitionScreen = document.getElementById('transition-screen');
+        const transitionEmoji = document.getElementById('transition-emoji');
+        const transitionText = document.getElementById('transition-text');
+
+        // --- Fungsi Audio ---
+        function speakClue(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'id-ID';
+                utterance.rate = 0.9;
+                utterance.pitch = 1.0;
+                utterance.volume = 1.0;
+                const voices = window.speechSynthesis.getVoices();
+                const googleVoice = voices.find(v => v.lang === 'id-ID' && v.name.includes('Google'));
+                if (googleVoice) utterance.voice = googleVoice;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function stopSpeaking() {
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+        }
+
+        function playSound(type) {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+                const now = ctx.currentTime;
+
+                if (type === 'correct') {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(600, now);
+                    osc.frequency.exponentialRampToValueAtTime(1000, now + 0.1);
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                    osc.start(now);
+                    osc.stop(now + 0.5);
+                } else if (type === 'wrong') {
+                    const osc1 = ctx.createOscillator();
+                    const gain1 = ctx.createGain();
+                    osc1.connect(gain1);
+                    gain1.connect(ctx.destination);
+                    osc1.type = 'sine';
+                    osc1.frequency.setValueAtTime(440, now); 
+                    gain1.gain.setValueAtTime(0.2, now);
+                    gain1.gain.linearRampToValueAtTime(0.01, now + 0.15);
+                    osc1.start(now);
+                    osc1.stop(now + 0.15);
+
+                    const osc2 = ctx.createOscillator();
+                    const gain2 = ctx.createGain();
+                    osc2.connect(gain2);
+                    gain2.connect(ctx.destination);
+                    osc2.type = 'sine';
+                    osc2.frequency.setValueAtTime(349, now + 0.2); 
+                    osc2.frequency.linearRampToValueAtTime(330, now + 0.5); 
+                    gain2.gain.setValueAtTime(0.2, now + 0.2);
+                    gain2.gain.linearRampToValueAtTime(0.01, now + 0.5);
+                    osc2.start(now + 0.2);
+                    osc2.stop(now + 0.5);
+                } else if (type === 'pop') {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.frequency.setValueAtTime(800, now);
+                    osc.frequency.exponentialRampToValueAtTime(100, now + 0.1);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                    osc.start(now);
+                    osc.stop(now + 0.1);
+                } else if (type === 'tick') {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.frequency.setValueAtTime(1000, now);
+                    gain.gain.setValueAtTime(0.3, now); 
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+                    osc.start(now);
+                    osc.stop(now + 0.05);
+                }
+            } catch (e) {}
+        }
+
+        // --- Logika Game ---
+        function startGame() {
+            if ('speechSynthesis' in window) window.speechSynthesis.getVoices();
+            shuffledQuestions = questions.sort(() => 0.5 - Math.random()); 
+            currentQuestionIndex = 0;
+            score = 0;
+            
+            startScreen.classList.add('hidden');
+            resultScreen.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+            loadQuestion();
+            playSound('pop');
+        }
+
+        function playTransition() {
+            const emojis = ["🚴", "🪁", "⚽", "🚗", "✈️", "🏗️"];
+            transitionEmoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            
+            const spiritPhrases = [
+                "SIAP-SIAP...",
+                "KAMU KUAT!",
+                "TARIK DAN DORONG!",
+                "SEMANGAT YA!",
+                "AYO, KAMU BISA!"
+            ];
+            const selectedPhrase = spiritPhrases[Math.floor(Math.random() * spiritPhrases.length)];
+            transitionText.textContent = selectedPhrase;
+            speakClue(selectedPhrase);
+
+            transitionScreen.classList.remove('translate-x-full');
+            transitionScreen.classList.add('translate-x-0');
+            playSound('pop');
+
+            setTimeout(() => {
+                loadQuestion();
+                setTimeout(() => {
+                    transitionScreen.classList.remove('translate-x-0');
+                    transitionScreen.classList.add('-translate-x-full');
+                    setTimeout(() => {
+                        transitionScreen.classList.remove('transition-transform');
+                        transitionScreen.classList.remove('-translate-x-full');
+                        transitionScreen.classList.add('translate-x-full');
+                        void transitionScreen.offsetWidth;
+                        transitionScreen.classList.add('transition-transform');
+                    }, 500);
+                }, 1000);
+            }, 600);
+        }
+
+        function loadQuestion() {
+            clearInterval(timerInterval);
+            clearTimeout(readingTimeout);
+            canAnswer = false;
+            
+            const q = shuffledQuestions[currentQuestionIndex];
+            
+            questionImage.classList.remove('image-animate');
+            void questionImage.offsetWidth; 
+            questionImage.classList.add('image-animate');
+            
+            timerBar.style.width = '100%';
+            timerBar.style.backgroundColor = '#2980b9'; // Biru
+
+            questionImage.src = q.image;
+            questionClue.textContent = q.clue;
+            
+            renderOptions(q);
+
+            setTimeout(() => {
+                // Menambahkan "Siapakah aku?" (atau frasa relevan) di akhir soal
+                speakClue(q.clue + " Siapakah aku?");
+            }, 800);
+
+            readingTimeout = setTimeout(() => {
+                startThinkingTimer();
+            }, READING_TIME * 1000);
+        }
+
+        function startThinkingTimer() {
+            canAnswer = true;
+            playSound('pop');
+            let timeLeft = THINKING_TIME;
+            const updateRate = 50; 
+            const totalSteps = (THINKING_TIME * 1000) / updateRate;
+            let currentStep = 0;
+            let lastTickStep = 0;
+
+            timerInterval = setInterval(() => {
+                currentStep++;
+                const percentage = 100 - ((currentStep / totalSteps) * 100);
+                timerBar.style.width = `${percentage}%`;
+                
+                let tickInterval = 20; 
+                
+                if (percentage < 30) {
+                    timerBar.style.backgroundColor = '#c0392b'; // Merah
+                    tickInterval = 4; // Cepat
+                } else if (percentage < 60) {
+                    timerBar.style.backgroundColor = '#f39c12'; // Kuning
+                    tickInterval = 10; // Sedang
+                } else {
+                    timerBar.style.backgroundColor = '#2980b9'; // Biru
+                    tickInterval = 20; // Lambat
+                }
+
+                if (currentStep - lastTickStep >= tickInterval) {
+                    playSound('tick');
+                    lastTickStep = currentStep;
+                }
+
+                if (currentStep >= totalSteps) {
+                    clearInterval(timerInterval);
+                    handleTimeOut();
+                }
+            }, updateRate);
+        }
+
+        function handleTimeOut() {
+            canAnswer = false;
+            appContainer.classList.add('shake');
+            playSound('wrong');
+            setTimeout(() => appContainer.classList.remove('shake'), 600);
+
+            const q = shuffledQuestions[currentQuestionIndex];
+            // Membacakan jawaban yang benar
+            setTimeout(() => speakClue("Jawabannya adalah " + q.correct), 500);
+
+            const allBtns = optionsContainer.querySelectorAll('button');
+            allBtns.forEach(btn => {
+                if (btn.textContent.includes(q.correct)) {
+                    btn.classList.add('ring-4', 'ring-[#27ae60]', 'scale-105', 'bg-[#27ae60]', 'text-white');
+                    btn.className = btn.className.replace(/bg-white/, 'bg-[#27ae60]').replace(/border-gray-200/, 'border-[#2ecc71]');
+                } else {
+                    btn.style.opacity = '0.5';
+                }
+            });
+
+            setTimeout(nextQuestion, 3500);
+        }
+
+        function renderOptions(q) {
+            optionsContainer.innerHTML = '';
+            const options = [...q.options].sort(() => 0.5 - Math.random());
+            
+            // Warna tombol nuansa Fisika (Biru, Oranye, Merah)
+            const colors = [
+                { bg: 'bg-[#3498db]', border: 'border-[#2980b9]', hover: 'hover:bg-[#5dade2]' },
+                { bg: 'bg-[#e67e22]', border: 'border-[#d35400]', hover: 'hover:bg-[#f39c12]' },
+                { bg: 'bg-[#e74c3c]', border: 'border-[#c0392b]', hover: 'hover:bg-[#ec7063]' }
+            ];
+
+            options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                const color = colors[index % colors.length];
+                btn.className = `btn-option w-full py-5 px-8 ${color.bg} border-b-[6px] ${color.border} text-white rounded-3xl text-2xl font-black ${color.hover} flex items-center shadow-lg active:border-b-0 active:translate-y-2 group`;
+                const labels = ["A", "B", "C"];
+                btn.innerHTML = `
+                    <span class="bg-white text-gray-700 w-12 h-12 flex items-center justify-center rounded-full text-2xl font-black mr-6 shadow-sm group-hover:scale-110 transition">${labels[index]}</span>
+                    <span class="flex-grow text-left text-shadow-sm text-2xl">${opt}</span>
+                `;
+                btn.onclick = () => checkAnswer(btn, opt, q.correct);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(btn, selected, correct) {
+            if (!canAnswer) return; 
+            canAnswer = false;
+            clearInterval(timerInterval); 
+            stopSpeaking(); 
+
+            const allBtns = optionsContainer.querySelectorAll('button');
+
+            if (selected === correct) {
+                btn.innerHTML = `<span class="w-full text-center text-3xl">🎉 BENAR!</span>`;
+                btn.className = `w-full py-5 bg-[#27ae60] border-b-[6px] border-[#2ecc71] text-white rounded-3xl text-2xl font-black shadow-lg transform scale-105`;
+                score += 10; 
+                playSound('correct');
+                fireConfetti(); 
+            } else {
+                btn.innerHTML = `<span class="w-full text-center text-3xl">❌ SALAH!</span>`;
+                btn.className = `w-full py-5 bg-[#c0392b] border-b-[6px] border-[#e74c3c] text-white rounded-3xl text-2xl font-black shadow-lg`;
+                appContainer.classList.add('shake');
+                playSound('wrong');
+                setTimeout(() => appContainer.classList.remove('shake'), 600);
+                allBtns.forEach(b => {
+                    if (b.textContent.includes(correct)) {
+                        b.classList.add('ring-4', 'ring-white', 'scale-105');
+                    }
+                });
+            }
+            setTimeout(nextQuestion, 2000);
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < shuffledQuestions.length) {
+                playTransition();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            gameScreen.classList.add('hidden');
+            resultScreen.classList.remove('hidden');
+            finalScoreEl.textContent = score;
+            playSound('pop');
+            
+            const maxScore = shuffledQuestions.length * 10;
+            const percentage = (score / maxScore) * 100;
+
+            if (percentage === 100) {
+                resultMsgEl.textContent = "Ilmuwan Cilik! Sempurna! 👨‍🔬👑";
+                fireConfetti(true);
+            } else if (percentage >= 60) {
+                resultMsgEl.textContent = "Hebat! Ahli Fisika! 🧲";
+                fireConfetti(true);
+            } else {
+                resultMsgEl.textContent = "Ayo Belajar Gaya Lagi! 📚";
+            }
+        }
+
+        function restartGame() {
+            startGame();
+        }
+
+        function fireConfetti(long = false) {
+            var duration = long ? 3 * 1000 : 0.5 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100 };
+            var random = function(min, max) { return Math.random() * (max - min) + min; }
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) return clearInterval(interval);
+                var particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: random(0.1, 0.3), y: Math.random() - 0.2 }, colors: ['#3498db', '#e67e22', '#e74c3c', '#FFFFFF'] }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: random(0.7, 0.9), y: Math.random() - 0.2 }, colors: ['#3498db', '#e67e22', '#e74c3c', '#FFFFFF'] }));
+            }, 250);
+        }
+    </script>
+</body>
+</html>

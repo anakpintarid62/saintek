@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thumbnail Kuis Sains</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #1a1a1a;
+            height: 100vh;
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        /* Container Thumbnail 1280x720 (HD Standard) */
+        #thumbnail {
+            width: 1280px;
+            height: 720px;
+            position: relative;
+            overflow: hidden;
+            /* Background Lab Sains Futuristik */
+            background: linear-gradient(135deg, #311B92 0%, #6200EA 50%, #651FFF 100%);
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Pattern Molekul di Background */
+        .molecule-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(circle, rgba(255,255,255,0.1) 10%, transparent 10%);
+            background-size: 50px 50px;
+            z-index: 1;
+        }
+
+        /* Lingkaran Cahaya */
+        .glow-circle {
+            position: absolute;
+            width: 900px;
+            height: 900px;
+            background: radial-gradient(circle, rgba(105, 240, 174, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 2;
+        }
+
+        /* Teks Judul dengan Efek 3D Neon */
+        .title-container {
+            z-index: 20;
+            text-align: center;
+            transform: rotate(-2deg);
+            margin-top: -40px;
+        }
+
+        .title-main {
+            font-size: 130px;
+            line-height: 0.9;
+            color: #FFFF00; /* Kuning Neon */
+            -webkit-text-stroke: 6px #3E2723;
+            text-shadow: 
+                8px 8px 0px #FF3D00, 
+                15px 15px 0px rgba(0,0,0,0.3);
+        }
+
+        .title-sub {
+            font-size: 80px;
+            color: #00E676; /* Hijau Neon */
+            -webkit-text-stroke: 4px #1B5E20;
+            text-shadow: 6px 6px 0px #004D40;
+            margin-top: 10px;
+        }
+
+        /* Badge Kelas */
+        .class-badge {
+            position: absolute;
+            top: 40px;
+            left: 40px;
+            background: #FF4081;
+            color: white;
+            padding: 15px 40px;
+            font-size: 40px;
+            border-radius: 20px;
+            border: 6px solid white;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            transform: rotate(-5deg);
+            z-index: 30;
+        }
+
+        /* Badge Jumlah Soal */
+        .count-badge {
+            position: absolute;
+            top: 40px;
+            right: 40px;
+            background: #2979FF;
+            color: white;
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 8px solid white;
+            box-shadow: 0 15px 20px rgba(0,0,0,0.3);
+            transform: rotate(10deg);
+            z-index: 30;
+        }
+
+        /* Ikon Wujud Zat */
+        .icon-container {
+            display: flex;
+            gap: 60px;
+            margin-top: 40px;
+            z-index: 20;
+        }
+
+        .state-card {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 30px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+            text-align: center;
+            width: 200px;
+            border: 5px solid;
+            transition: transform 0.3s;
+        }
+
+        .state-card.solid { border-color: #795548; transform: rotate(-5deg); }
+        .state-card.liquid { border-color: #03A9F4; transform: translateY(-30px); }
+        .state-card.gas { border-color: #9E9E9E; transform: rotate(5deg); }
+
+        .state-emoji {
+            font-size: 100px;
+            display: block;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2));
+        }
+
+        .state-label {
+            font-size: 35px;
+            font-weight: 900;
+            text-transform: uppercase;
+            color: #333;
+        }
+
+        /* Dekorasi Tambahan */
+        .deco {
+            position: absolute;
+            font-size: 80px;
+            z-index: 10;
+            opacity: 0.8;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="thumbnail">
+        <div class="molecule-bg"></div>
+        <div class="glow-circle"></div>
+
+        <!-- Badge -->
+        <div class="class-badge font-black">
+            Untuk siswa SD dan SMP 📚
+        </div>
+
+        <div class="count-badge">
+            <span class="text-7xl font-black" style="line-height: 1;">40</span>
+            <span class="text-2xl font-bold uppercase mt-2">Soal Kuis</span>
+        </div>
+
+        <!-- Judul -->
+        <div class="title-container">
+            <div class="title-sub font-black">KUIS SAINS</div>
+            <div class="title-main font-black">WUJUD ZAT</div>
+        </div>
+
+        <!-- Kartu Wujud Zat -->
+        <div class="icon-container">
+            <!-- Padat -->
+            <div class="state-card solid">
+                <span class="state-emoji">🧊</span>
+                <span class="state-label">Padat</span>
+            </div>
+            <!-- Cair -->
+            <div class="state-card liquid">
+                <span class="state-emoji">💧</span>
+                <span class="state-label">Cair</span>
+            </div>
+            <!-- Gas -->
+            <div class="state-card gas">
+                <span class="state-emoji">🎈</span>
+                <span class="state-label">Gas</span>
+            </div>
+        </div>
+
+        <!-- Dekorasi -->
+        <div class="deco" style="top: 200px; left: 100px; animation-delay: 0s;">🔥</div>
+        <div class="deco" style="bottom: 150px; right: 150px; animation-delay: 1s;">🧪</div>
+        <div class="deco" style="top: 150px; right: 350px; font-size: 60px; animation-delay: 2s;">⚗️</div>
+        <div class="deco" style="bottom: 50px; left: 350px; font-size: 60px; animation-delay: 1.5s;">🌡️</div>
+
+    </div>
+
+</body>
+</html>

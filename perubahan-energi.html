@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Mengubah Bentuk Energi (Spesial)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Fredoka untuk kesan anak-anak -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+    <!-- Confetti Effect -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Fredoka', sans-serif;
+            /* Background Dinamis (Energi: Kuning ke Merah) */
+            background: linear-gradient(135deg, #f1c40f 0%, #e74c3c 100%);
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            color: #333;
+        }
+
+        /* Container Kartu Besar */
+        #app-container {
+            aspect-ratio: 16/9;
+            width: 90vw;
+            max-width: 1280px;
+            max-height: 90vh;
+            background: #FFF8E1; /* Krem Kuning Muda */
+            border-radius: 40px;
+            box-shadow: 0 20px 0 #d35400, 0 30px 40px rgba(0,0,0,0.5); /* Efek 3D Oranye Tua */
+            border: 8px solid #FFF;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Sunburst Background */
+        .sunburst {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-conic-gradient(
+                from 0deg,
+                rgba(255, 255, 0, 0.4) 0deg 20deg,
+                rgba(255, 165, 0, 0.4) 20deg 40deg
+            );
+            transform: translate(-50%, -50%);
+            animation: rotateSunburst 60s linear infinite;
+            z-index: 0;
+            pointer-events: none; /* Agar tidak mengganggu klik */
+        }
+
+        @keyframes rotateSunburst {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Dekorasi Ikon Melayang */
+        .floating-icon {
+            position: absolute;
+            font-size: 3rem;
+            animation: floatUp 15s linear infinite;
+            opacity: 0.3;
+            z-index: 1; /* Di atas sunburst */
+            bottom: -50px;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.3; }
+            100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* Tombol Jawaban "Jelly" */
+        .btn-option {
+            font-family: 'Nunito', sans-serif;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            top: 0;
+        }
+        
+        .btn-option:hover {
+            transform: translateY(-4px);
+            filter: brightness(1.1);
+        }
+
+        .btn-option:active {
+            transform: translateY(2px);
+            box-shadow: none !important;
+        }
+
+        /* Animasi Gambar Masuk */
+        @keyframes popInImage {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .image-animate {
+            animation: popInImage 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        /* Shake kalau salah */
+        @keyframes wobble {
+            0%, 100% { transform: translateX(0) rotate(0); }
+            15% { transform: translateX(-15px) rotate(-5deg); }
+            30% { transform: translateX(10px) rotate(3deg); }
+            45% { transform: translateX(-10px) rotate(-3deg); }
+            60% { transform: translateX(5px) rotate(2deg); }
+        }
+        .shake {
+            animation: wobble 0.6s ease-in-out;
+        }
+
+        /* Timer Bar Animation */
+        .timer-container {
+            width: 100%;
+            height: 24px;
+            background: #e0e0e0;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            border: 3px solid #fff;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+        }
+        
+        .timer-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #f1c40f, #e67e22, #c0392b);
+            background-size: 200% 100%;
+            width: 100%;
+            transform-origin: left;
+            transition: width 0.1s linear;
+        }
+
+        /* Styling untuk Layar Transisi */
+        .pattern-bg {
+            background-image: radial-gradient(#ffffff 15%, transparent 15%);
+            background-size: 40px 40px;
+            opacity: 0.2;
+        }
+        
+        /* Background Konten Kiri (Pola Listrik/Energi) */
+        .energy-pattern {
+             background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23f39c12' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Dekorasi Floating Icons (Tema Energi) -->
+    <div class="floating-icon" style="left: 10%; animation-duration: 12s; animation-delay: 0s;">⚡</div>
+    <div class="floating-icon" style="left: 25%; animation-duration: 15s; animation-delay: 2s;">💡</div>
+    <div class="floating-icon" style="left: 45%; animation-duration: 10s; animation-delay: 5s;">🔥</div>
+    <div class="floating-icon" style="left: 60%; animation-duration: 18s; animation-delay: 1s;">🔋</div>
+    <div class="floating-icon" style="left: 80%; animation-duration: 14s; animation-delay: 3s;">☀️</div>
+    <div class="floating-icon" style="left: 90%; animation-duration: 11s; animation-delay: 6s;">🔌</div>
+
+    <div id="app-container" class="flex flex-col p-6 z-10">
+        
+        <!-- Sunburst Background -->
+        <div class="sunburst"></div>
+
+        <!-- TRANSISI LAYER -->
+        <div id="transition-screen" class="absolute inset-0 z-50 flex flex-col items-center justify-center bg-[#f39c12] transition-transform duration-500 -translate-x-full shadow-2xl rounded-[32px]">
+            <div class="pattern-bg absolute inset-0"></div>
+            <div id="transition-emoji" class="text-9xl animate-bounce mb-6 drop-shadow-lg z-10">🚀</div>
+            <h2 id="transition-text" class="text-6xl font-black text-white tracking-wider drop-shadow-md z-10 border-4 border-white/20 px-8 py-4 rounded-full bg-white/10 backdrop-blur-sm text-center">
+                SIAP-SIAP...
+            </h2>
+        </div>
+
+        <!-- Halaman Utama (Intro) -->
+        <div id="start-screen" class="h-full flex flex-col items-center justify-center space-y-6 animate-fade-in z-20 relative">
+            <div class="flex items-center space-x-6">
+                <!-- Gunakan gambar asli untuk intro -->
+                <img src="https://tse2.mm.bing.net/th?q=Sun+Cartoon&w=200&h=200&c=7&rs=1&p=0" class="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover">
+                <img src="https://tse2.mm.bing.net/th?q=Wind+Turbine+Cartoon&w=200&h=200&c=7&rs=1&p=0" class="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover" style="animation-delay: 0.2s">
+                <img src="https://tse2.mm.bing.net/th?q=Light+Bulb+Idea+Cartoon&w=200&h=200&c=7&rs=1&p=0" class="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover" style="animation-delay: 0.4s">
+            </div>
+            
+            <div class="text-center space-y-4 bg-white/50 p-6 rounded-[30px] backdrop-blur-sm border-4 border-white">
+                <h1 class="text-6xl font-black text-[#d35400] tracking-wide" style="text-shadow: 3px 3px 0 #FFF;">
+                    Kuis Energi Seru!
+                </h1>
+                <p class="text-2xl text-[#e67e22] font-bold">Mengubah Bentuk Energi (Kelas 4)</p>
+            </div>
+
+            <button onclick="startGame()" class="mt-4 px-12 py-5 bg-[#f1c40f] text-[#5d4037] border-b-[8px] border-[#d35400] rounded-full font-black text-3xl shadow-xl hover:bg-[#f39c12] transition transform hover:scale-105 active:border-b-0 active:translate-y-2">
+                MULAI MISI! ▶️
+            </button>
+        </div>
+
+        <!-- Halaman Gameplay -->
+        <div id="game-screen" class="hidden h-full flex flex-col z-20 relative">
+            <div class="text-center pt-2 pb-2">
+                <h2 class="text-5xl font-black text-[#c0392b] tracking-wider uppercase drop-shadow-sm" style="-webkit-text-stroke: 2px white;">
+                    TRANSFORMASI ENERGI
+                </h2>
+            </div>
+
+            <div class="px-6">
+                <div class="timer-container">
+                    <div id="timer-bar" class="timer-bar" style="width: 100%;"></div>
+                </div>
+            </div>
+
+            <div class="flex-grow flex flex-row items-center justify-center gap-8 px-6 pb-6">
+                
+                <!-- Card Kiri (Tempat Gambar) -->
+                <div class="w-1/2 flex flex-col items-center justify-center bg-white border-[6px] border-[#f39c12] border-dashed rounded-[40px] p-6 shadow-sm h-full relative overflow-hidden group">
+                    <div class="absolute inset-0 energy-pattern opacity-50"></div>
+                    
+                    <!-- Container Gambar -->
+                    <div class="relative w-full h-64 flex items-center justify-center mb-4 z-10">
+                        <img id="question-image" src="" alt="Tebak Gambar" class="image-animate max-h-full max-w-full rounded-2xl shadow-xl border-4 border-white object-contain bg-white">
+                    </div>
+
+                    <p id="question-clue" class="relative z-10 text-2xl font-bold text-[#d35400] text-center leading-snug bg-white/95 px-6 py-3 rounded-xl border-2 border-[#f1c40f] shadow-sm">"..."</p>
+                </div>
+
+                <!-- Card Kanan -->
+                <div class="w-1/2 h-full flex items-center justify-center">
+                    <div id="options-container" class="grid grid-cols-1 gap-5 w-full">
+                        <!-- Buttons injected via JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Halaman Hasil -->
+        <div id="result-screen" class="hidden h-full flex flex-col items-center justify-center space-y-6 z-20 relative">
+            <div id="result-emoji" class="text-9xl animate-bounce drop-shadow-xl">⚡</div>
+            
+            <div class="text-center space-y-4 bg-white/80 p-8 rounded-[40px] border-8 border-[#f1c40f] shadow-2xl transform rotate-1">
+                <h2 class="text-5xl font-black text-[#c0392b]">Misi Selesai!</h2>
+                
+                <div class="py-4">
+                    <p class="text-[#e67e22] text-2xl font-bold uppercase tracking-wider">Nilai Kamu</p>
+                    <div class="text-8xl font-black text-[#f39c12] my-2 drop-shadow-md">
+                        <span id="final-score">0</span>
+                    </div>
+                    <p id="result-message" class="text-3xl font-bold text-[#d35400]">Hebat Sekali!</p>
+                </div>
+            </div>
+
+            <div class="flex gap-6 mt-4">
+                <button onclick="restartGame()" class="px-8 py-4 bg-[#2ecc71] border-b-8 border-[#27ae60] text-white rounded-3xl font-black text-2xl transition hover:-translate-y-1 active:border-b-0 active:translate-y-2">
+                    <i class="fas fa-redo mr-3"></i> Main Lagi
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- DATA 40 SOAL ENERGI (BAB 4) ---
+        const getImage = (keyword) => `https://tse2.mm.bing.net/th?q=${keyword}&w=400&h=400&c=7&rs=1&p=0`;
+
+        const questions = [
+            // KONSEP ENERGI
+            { 
+                image: getImage("Energy Concept"), 
+                clue: "Perubahan bentuk energi menjadi bentuk lain disebut...", 
+                correct: "Transformasi Energi", 
+                ask: "Disebut apakah aku?",
+                options: ["Transformasi Energi", "Penghilangan Energi", "Penciptaan Energi"] 
+            },
+            { 
+                image: getImage("Hand Rubbing"), 
+                clue: "Menggosokkan kedua telapak tangan saat dingin mengubah energi gerak menjadi...", 
+                correct: "Energi Panas", 
+                ask: "Menjadi energi apakah aku?",
+                options: ["Energi Panas", "Energi Cahaya", "Energi Listrik"] 
+            },
+            { 
+                image: getImage("Eating Food"), 
+                clue: "Energi yang tersimpan dalam makanan adalah...", 
+                correct: "Energi Kimia", 
+                ask: "Energi apakah aku?",
+                options: ["Energi Kimia", "Energi Listrik", "Energi Gerak"] 
+            },
+            { 
+                image: getImage("Running Kid"), 
+                clue: "Setelah makan, kita bisa berlari. Energi kimia berubah menjadi...", 
+                correct: "Energi Gerak", 
+                ask: "Menjadi energi apakah aku?",
+                options: ["Energi Gerak", "Energi Cahaya", "Energi Bunyi"] 
+            },
+            { 
+                image: getImage("Conservation of Energy"), 
+                clue: "Manusia tidak bisa menciptakan atau memusnahkan energi, hanya bisa...", 
+                correct: "Mengubah Bentuknya", 
+                ask: "Apa yang bisa dilakukan?",
+                options: ["Mengubah Bentuknya", "Membuangnya", "Membelinya"] 
+            },
+
+            // PERUBAHAN ENERGI DI RUMAH
+            { 
+                image: getImage("Electric Fan"), 
+                clue: "Kipas angin mengubah energi listrik menjadi...", 
+                correct: "Energi Gerak", 
+                ask: "Menjadi energi apakah aku?",
+                options: ["Energi Gerak", "Energi Panas", "Energi Cahaya"] 
+            },
+            { 
+                image: getImage("Electric Iron"), 
+                clue: "Setrika mengubah energi listrik menjadi...", 
+                correct: "Energi Panas", 
+                ask: "Menjadi energi apakah aku?",
+                options: ["Energi Panas", "Energi Gerak", "Energi Bunyi"] 
+            },
+            { 
+                image: getImage("Television TV"), 
+                clue: "Televisi mengubah energi listrik menjadi energi cahaya dan...", 
+                correct: "Energi Bunyi", 
+                ask: "Energi apakah yang dihasilkan?",
+                options: ["Energi Bunyi", "Energi Gerak", "Energi Kimia"] 
+            },
+            { 
+                image: getImage("Blender"), 
+                clue: "Blender mengubah energi listrik menjadi energi gerak untuk...", 
+                correct: "Menghaluskan Makanan", 
+                ask: "Untuk apakah aku?",
+                options: ["Menghaluskan Makanan", "Mendinginkan Makanan", "Memanaskan Makanan"] 
+            },
+            { 
+                image: getImage("Washing Machine"), 
+                clue: "Mesin cuci mengubah energi listrik menjadi energi gerak untuk...", 
+                correct: "Mencuci Pakaian", 
+                ask: "Untuk apakah aku?",
+                options: ["Mencuci Pakaian", "Menyetrika Pakaian", "Menjemur Pakaian"] 
+            },
+            { 
+                image: getImage("Rice Cooker"), 
+                clue: "Rice cooker mengubah energi listrik menjadi energi panas untuk...", 
+                correct: "Memasak Nasi", 
+                ask: "Untuk apakah aku?",
+                options: ["Memasak Nasi", "Mendinginkan Nasi", "Menggiling Nasi"] 
+            },
+            { 
+                image: getImage("Refrigerator"), 
+                clue: "Kulkas mengubah energi listrik menjadi...", 
+                correct: "Energi Dingin", 
+                ask: "Menjadi energi apakah aku?",
+                options: ["Energi Dingin", "Energi Panas", "Energi Gerak"] 
+            },
+            { 
+                image: getImage("Hair Dryer"), 
+                clue: "Pengering rambut mengubah listrik menjadi energi gerak angin dan...", 
+                correct: "Energi Panas", 
+                ask: "Energi apakah aku?",
+                options: ["Energi Panas", "Energi Cahaya", "Energi Kimia"] 
+            },
+            { 
+                image: getImage("Radio"), 
+                clue: "Radio mengubah energi listrik menjadi...", 
+                correct: "Energi Bunyi", 
+                ask: "Menjadi energi apakah aku?",
+                options: ["Energi Bunyi", "Energi Cahaya", "Energi Gerak"] 
+            },
+            { 
+                image: getImage("Lamp Light Bulb"), 
+                clue: "Lampu mengubah energi listrik menjadi...", 
+                correct: "Energi Cahaya", 
+                ask: "Menjadi energi apakah aku?",
+                options: ["Energi Cahaya", "Energi Gerak", "Energi Bunyi"] 
+            },
+            { 
+                image: getImage("Dispenser Water"), 
+                clue: "Dispenser air panas mengubah energi listrik menjadi...", 
+                correct: "Energi Panas", 
+                ask: "Menjadi energi apakah aku?",
+                options: ["Energi Panas", "Energi Gerak", "Energi Cahaya"] 
+            },
+
+            // ENERGI KIMIA & LAINNYA
+            { 
+                image: getImage("Battery"), 
+                clue: "Baterai menyimpan energi...", 
+                correct: "Energi Kimia", 
+                ask: "Energi apakah aku?",
+                options: ["Energi Kimia", "Energi Gerak", "Energi Panas"] 
+            },
+            { 
+                image: getImage("Toy Car Battery"), 
+                clue: "Mobil mainan baterai bergerak karena perubahan energi kimia lalu listrik lalu...", 
+                correct: "Gerak", 
+                ask: "Menjadi apakah aku?",
+                options: ["Gerak", "Panas", "Cahaya"] 
+            },
+            { 
+                image: getImage("Gas Stove"), 
+                clue: "Kompor gas mengubah energi kimia gas menjadi...", 
+                correct: "Energi Panas", 
+                ask: "Menjadi energi apakah aku?",
+                options: ["Energi Panas", "Energi Listrik", "Energi Gerak"] 
+            },
+            { 
+                image: getImage("Flashlight"), 
+                clue: "Senter baterai mengubah energi kimia menjadi listrik lalu...", 
+                correct: "Cahaya", 
+                ask: "Menjadi apakah aku?",
+                options: ["Cahaya", "Bunyi", "Gerak"] 
+            },
+            { 
+                image: getImage("Car Battery Accumulator"), 
+                clue: "Aki mobil menyimpan energi...", 
+                correct: "Energi Kimia", 
+                ask: "Energi apakah aku?",
+                options: ["Energi Kimia", "Energi Gerak", "Energi Panas"] 
+            },
+            { 
+                image: getImage("Candle Burning"), 
+                clue: "Lilin yang menyala mengubah energi kimia menjadi...", 
+                correct: "Cahaya & Panas", 
+                ask: "Menjadi energi apakah aku?",
+                options: ["Cahaya & Panas", "Gerak & Bunyi", "Listrik"] 
+            },
+            { 
+                image: getImage("Fireworks"), 
+                clue: "Kembang api meledak mengubah energi kimia menjadi cahaya, bunyi, dan...", 
+                correct: "Panas", 
+                ask: "Menjadi energi apakah aku?",
+                options: ["Panas", "Dingin", "Listrik"] 
+            },
+
+            // ENERGI GERAK & LAINNYA
+            { 
+                image: getImage("Playing Guitar"), 
+                clue: "Memetik gitar mengubah energi gerak menjadi...", 
+                correct: "Energi Bunyi", 
+                ask: "Menjadi energi apakah aku?",
+                options: ["Energi Bunyi", "Energi Cahaya", "Energi Listrik"] 
+            },
+            { 
+                image: getImage("Playing Drum"), 
+                clue: "Memukul drum mengubah energi gerak menjadi...", 
+                correct: "Energi Bunyi", 
+                ask: "Menjadi energi apakah aku?",
+                options: ["Energi Bunyi", "Energi Panas", "Energi Kimia"] 
+            },
+            { 
+                image: getImage("Clapping Hands"), 
+                clue: "Bertepuk tangan mengubah energi gerak menjadi...", 
+                correct: "Energi Bunyi", 
+                ask: "Menjadi energi apakah aku?",
+                options: ["Energi Bunyi", "Energi Cahaya", "Energi Listrik"] 
+            },
+            { 
+                image: getImage("Violin"), 
+                clue: "Menggesek biola mengubah energi gerak menjadi...", 
+                correct: "Energi Bunyi", 
+                ask: "Menjadi energi apakah aku?",
+                options: ["Energi Bunyi", "Energi Angin", "Energi Panas"] 
+            },
+            { 
+                image: getImage("Bicycle Dynamo"), 
+                clue: "Dinamo sepeda mengubah energi gerak roda menjadi...", 
+                correct: "Energi Listrik", 
+                ask: "Menjadi energi apakah aku?",
+                options: ["Energi Listrik", "Energi Bunyi", "Energi Kimia"] 
+            },
+            { 
+                image: getImage("Wind Turbine"), 
+                clue: "Kincir angin mengubah energi gerak angin menjadi...", 
+                correct: "Energi Listrik", 
+                ask: "Menjadi energi apakah aku?",
+                options: ["Energi Listrik", "Energi Panas", "Energi Kimia"] 
+            },
+            { 
+                image: getImage("Hydroelectric Dam"), 
+                clue: "PLTA memanfaatkan energi gerak dari...", 
+                correct: "Air", 
+                ask: "Gerak dari manakah aku?",
+                options: ["Air", "Uap", "Angin"] 
+            },
+            { 
+                image: getImage("Solar Panel"), 
+                clue: "Panel surya mengubah energi cahaya matahari menjadi...", 
+                correct: "Energi Listrik", 
+                ask: "Menjadi energi apakah aku?",
+                options: ["Energi Listrik", "Energi Gerak", "Energi Bunyi"] 
+            },
+            
+            // ENERGI POTENSIAL & TAMBAHAN
+            { 
+                image: getImage("Slingshot"), 
+                clue: "Karet ketapel yang ditarik menyimpan energi...", 
+                correct: "Potensial Pegas", 
+                ask: "Energi apakah aku?",
+                options: ["Potensial Pegas", "Panas", "Listrik"] 
+            },
+            { 
+                image: getImage("Archery"), 
+                clue: "Busur panah yang diregangkan menyimpan energi...", 
+                correct: "Potensial Pegas", 
+                ask: "Energi apakah aku?",
+                options: ["Potensial Pegas", "Kimia", "Gravitasi"] 
+            },
+            { 
+                image: getImage("Waterfall"), 
+                clue: "Air terjun yang jatuh memiliki energi...", 
+                correct: "Gerak", 
+                ask: "Energi apakah aku?",
+                options: ["Gerak", "Panas", "Kimia"] 
+            },
+            { 
+                image: getImage("Photosynthesis"), 
+                clue: "Tumbuhan mengubah energi cahaya matahari menjadi energi kimia dalam...", 
+                correct: "Makanan", 
+                ask: "Dalam bentuk apakah aku?",
+                options: ["Makanan", "Tanah", "Air"] 
+            },
+            { 
+                image: getImage("Sweating Running"), 
+                clue: "Tubuh berkeringat panas setelah lari karena pembakaran energi...", 
+                correct: "Kimia Makanan", 
+                ask: "Energi dari manakah aku?",
+                options: ["Kimia Makanan", "Matahari", "Listrik"] 
+            },
+            { 
+                image: getImage("Car Tire Heat"), 
+                clue: "Ban motor panas setelah perjalanan jauh karena gesekan dengan...", 
+                correct: "Jalan Aspal", 
+                ask: "Gesekan dengan apakah aku?",
+                options: ["Jalan Aspal", "Angin", "Air"] 
+            },
+            { 
+                image: getImage("Wall Clock"), 
+                clue: "Jam dinding baterai mengubah energi kimia menjadi listrik lalu...", 
+                correct: "Gerak", 
+                ask: "Menjadi apakah aku?",
+                options: ["Gerak", "Panas", "Cahaya"] 
+            },
+            { 
+                image: getImage("Soldering Iron"), 
+                clue: "Solder listrik mengubah energi listrik menjadi...", 
+                correct: "Panas", 
+                ask: "Menjadi energi apakah aku?",
+                options: ["Panas", "Dingin", "Gerak"] 
+            }
+        ];
+
+        // --- Variabel Game ---
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let shuffledQuestions = [];
+        let canAnswer = false;
+        
+        let timerInterval;
+        let readingTimeout;
+        const THINKING_TIME = 8; 
+        const READING_TIME = 5;
+
+        // --- DOM Elements ---
+        const startScreen = document.getElementById('start-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const questionImage = document.getElementById('question-image');
+        const questionClue = document.getElementById('question-clue');
+        const optionsContainer = document.getElementById('options-container');
+        const finalScoreEl = document.getElementById('final-score');
+        const resultMsgEl = document.getElementById('result-message');
+        const appContainer = document.getElementById('app-container');
+        const timerBar = document.getElementById('timer-bar');
+        const transitionScreen = document.getElementById('transition-screen');
+        const transitionEmoji = document.getElementById('transition-emoji');
+        const transitionText = document.getElementById('transition-text');
+
+        // --- Fungsi Audio ---
+        function speakClue(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'id-ID';
+                utterance.rate = 0.9;
+                utterance.pitch = 1.0;
+                utterance.volume = 1.0;
+                const voices = window.speechSynthesis.getVoices();
+                const googleVoice = voices.find(v => v.lang === 'id-ID' && v.name.includes('Google'));
+                if (googleVoice) utterance.voice = googleVoice;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function stopSpeaking() {
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+        }
+
+        function playSound(type) {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+                const now = ctx.currentTime;
+
+                if (type === 'correct') {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(600, now);
+                    osc.frequency.exponentialRampToValueAtTime(1000, now + 0.1);
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                    osc.start(now);
+                    osc.stop(now + 0.5);
+                } else if (type === 'wrong') {
+                    const osc1 = ctx.createOscillator();
+                    const gain1 = ctx.createGain();
+                    osc1.connect(gain1);
+                    gain1.connect(ctx.destination);
+                    osc1.type = 'sine';
+                    osc1.frequency.setValueAtTime(440, now); 
+                    gain1.gain.setValueAtTime(0.2, now);
+                    gain1.gain.linearRampToValueAtTime(0.01, now + 0.15);
+                    osc1.start(now);
+                    osc1.stop(now + 0.15);
+
+                    const osc2 = ctx.createOscillator();
+                    const gain2 = ctx.createGain();
+                    osc2.connect(gain2);
+                    gain2.connect(ctx.destination);
+                    osc2.type = 'sine';
+                    osc2.frequency.setValueAtTime(349, now + 0.2); 
+                    osc2.frequency.linearRampToValueAtTime(330, now + 0.5); 
+                    gain2.gain.setValueAtTime(0.2, now + 0.2);
+                    gain2.gain.linearRampToValueAtTime(0.01, now + 0.5);
+                    osc2.start(now + 0.2);
+                    osc2.stop(now + 0.5);
+                } else if (type === 'pop') {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.frequency.setValueAtTime(800, now);
+                    osc.frequency.exponentialRampToValueAtTime(100, now + 0.1);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                    osc.start(now);
+                    osc.stop(now + 0.1);
+                } else if (type === 'tick') {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.frequency.setValueAtTime(1000, now);
+                    gain.gain.setValueAtTime(0.3, now); 
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+                    osc.start(now);
+                    osc.stop(now + 0.05);
+                }
+            } catch (e) {}
+        }
+
+        // --- Logika Game ---
+        function startGame() {
+            if ('speechSynthesis' in window) window.speechSynthesis.getVoices();
+            shuffledQuestions = questions.sort(() => 0.5 - Math.random()); 
+            currentQuestionIndex = 0;
+            score = 0;
+            
+            startScreen.classList.add('hidden');
+            resultScreen.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+            loadQuestion();
+            playSound('pop');
+        }
+
+        function playTransition() {
+            const emojis = ["⚡", "💡", "🔥", "🔋", "☀️", "🔌"];
+            transitionEmoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            
+            const spiritPhrases = [
+                "SIAP-SIAP...",
+                "KAMU HEBAT!",
+                "ENERGI POSITIF!",
+                "SEMANGAT YA!",
+                "AYO, KAMU BISA!"
+            ];
+            const selectedPhrase = spiritPhrases[Math.floor(Math.random() * spiritPhrases.length)];
+            transitionText.textContent = selectedPhrase;
+            speakClue(selectedPhrase);
+
+            // LOGIKA BARU: Gerak Kiri ke Kanan
+            transitionScreen.classList.remove('transition-transform');
+            transitionScreen.classList.remove('translate-x-full'); 
+            transitionScreen.classList.remove('translate-x-0');    
+            transitionScreen.classList.add('-translate-x-full');   
+            
+            void transitionScreen.offsetWidth; 
+
+            transitionScreen.classList.add('transition-transform');
+            transitionScreen.classList.remove('-translate-x-full');
+            transitionScreen.classList.add('translate-x-0');
+            playSound('pop');
+
+            setTimeout(() => {
+                loadQuestion();
+                setTimeout(() => {
+                    transitionScreen.classList.remove('translate-x-0');
+                    transitionScreen.classList.add('translate-x-full');
+                }, 2000); // Jeda transisi 2 detik
+            }, 600);
+        }
+
+        function loadQuestion() {
+            clearInterval(timerInterval);
+            clearTimeout(readingTimeout);
+            canAnswer = false;
+            
+            const q = shuffledQuestions[currentQuestionIndex];
+            
+            questionImage.classList.remove('image-animate');
+            void questionImage.offsetWidth; 
+            questionImage.classList.add('image-animate');
+            
+            timerBar.style.width = '100%';
+            timerBar.style.backgroundColor = '#f1c40f'; // Kuning
+
+            questionImage.src = q.image;
+            questionClue.textContent = q.clue;
+            
+            renderOptions(q);
+
+            setTimeout(() => {
+                // UPDATE: Menggunakan frasa tanya khusus jika ada, default: "Siapakah aku?"
+                const suffix = q.ask || "Siapakah aku?";
+                speakClue(q.clue + " " + suffix);
+            }, 800);
+
+            readingTimeout = setTimeout(() => {
+                startThinkingTimer();
+            }, READING_TIME * 1000);
+        }
+
+        function startThinkingTimer() {
+            canAnswer = true;
+            playSound('pop');
+            let timeLeft = THINKING_TIME;
+            const updateRate = 50; 
+            const totalSteps = (THINKING_TIME * 1000) / updateRate;
+            let currentStep = 0;
+            let lastTickStep = 0;
+
+            timerInterval = setInterval(() => {
+                currentStep++;
+                const percentage = 100 - ((currentStep / totalSteps) * 100);
+                timerBar.style.width = `${percentage}%`;
+                
+                let tickInterval = 20; 
+                
+                if (percentage < 30) {
+                    timerBar.style.backgroundColor = '#c0392b'; // Merah
+                    tickInterval = 4; // Cepat
+                } else if (percentage < 60) {
+                    timerBar.style.backgroundColor = '#e67e22'; // Oranye
+                    tickInterval = 10; // Sedang
+                } else {
+                    timerBar.style.backgroundColor = '#f1c40f'; // Kuning
+                    tickInterval = 20; // Lambat
+                }
+
+                if (currentStep - lastTickStep >= tickInterval) {
+                    playSound('tick');
+                    lastTickStep = currentStep;
+                }
+
+                if (currentStep >= totalSteps) {
+                    clearInterval(timerInterval);
+                    handleTimeOut();
+                }
+            }, updateRate);
+        }
+
+        function handleTimeOut() {
+            canAnswer = false;
+            appContainer.classList.add('shake');
+            playSound('wrong');
+            setTimeout(() => appContainer.classList.remove('shake'), 600);
+
+            const q = shuffledQuestions[currentQuestionIndex];
+            setTimeout(() => speakClue("Jawabannya adalah " + q.correct), 500);
+
+            const allBtns = optionsContainer.querySelectorAll('button');
+            allBtns.forEach(btn => {
+                if (btn.textContent.includes(q.correct)) {
+                    btn.classList.add('ring-4', 'ring-[#f1c40f]', 'scale-105', 'bg-[#f1c40f]', 'text-white');
+                    btn.className = btn.className.replace(/bg-white/, 'bg-[#f1c40f]').replace(/border-gray-200/, 'border-[#f39c12]');
+                } else {
+                    btn.style.opacity = '0.5';
+                }
+            });
+
+            setTimeout(nextQuestion, 4500); // Waktu baca jawaban 4.5 detik
+        }
+
+        function renderOptions(q) {
+            optionsContainer.innerHTML = '';
+            const options = [...q.options].sort(() => 0.5 - Math.random());
+            
+            // Warna tombol nuansa Energi (Kuning, Oranye, Merah)
+            const colors = [
+                { bg: 'bg-[#f1c40f]', border: 'border-[#f39c12]', hover: 'hover:bg-[#f2c94c]' },
+                { bg: 'bg-[#e67e22]', border: 'border-[#d35400]', hover: 'hover:bg-[#f2994a]' },
+                { bg: 'bg-[#e74c3c]', border: 'border-[#c0392b]', hover: 'hover:bg-[#eb5757]' }
+            ];
+
+            options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                const color = colors[index % colors.length];
+                btn.className = `btn-option w-full py-5 px-8 ${color.bg} border-b-[6px] ${color.border} text-white rounded-3xl text-2xl font-black ${color.hover} flex items-center shadow-lg active:border-b-0 active:translate-y-2 group`;
+                const labels = ["A", "B", "C"];
+                btn.innerHTML = `
+                    <span class="bg-white text-gray-700 w-12 h-12 flex items-center justify-center rounded-full text-2xl font-black mr-6 shadow-sm group-hover:scale-110 transition">${labels[index]}</span>
+                    <span class="flex-grow text-left text-shadow-sm text-2xl">${opt}</span>
+                `;
+                btn.onclick = () => checkAnswer(btn, opt, q.correct);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(btn, selected, correct) {
+            if (!canAnswer) return; 
+            canAnswer = false;
+            clearInterval(timerInterval); 
+            stopSpeaking(); 
+
+            const allBtns = optionsContainer.querySelectorAll('button');
+
+            if (selected === correct) {
+                btn.innerHTML = `<span class="w-full text-center text-3xl">🎉 BENAR!</span>`;
+                btn.className = `w-full py-5 bg-[#2ecc71] border-b-[6px] border-[#27ae60] text-white rounded-3xl text-2xl font-black shadow-lg transform scale-105`;
+                score += 10; 
+                playSound('correct');
+                fireConfetti(); 
+            } else {
+                btn.innerHTML = `<span class="w-full text-center text-3xl">❌ SALAH!</span>`;
+                btn.className = `w-full py-5 bg-[#e74c3c] border-b-[6px] border-[#c0392b] text-white rounded-3xl text-2xl font-black shadow-lg`;
+                appContainer.classList.add('shake');
+                playSound('wrong');
+                setTimeout(() => appContainer.classList.remove('shake'), 600);
+                allBtns.forEach(b => {
+                    if (b.textContent.includes(correct)) {
+                        b.classList.add('ring-4', 'ring-white', 'scale-105');
+                    }
+                });
+            }
+            setTimeout(nextQuestion, 3000); // Waktu baca hasil 3 detik
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < shuffledQuestions.length) {
+                playTransition();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            gameScreen.classList.add('hidden');
+            resultScreen.classList.remove('hidden');
+            finalScoreEl.textContent = score;
+            playSound('pop');
+            
+            const maxScore = shuffledQuestions.length * 10;
+            const percentage = (score / maxScore) * 100;
+
+            if (percentage === 100) {
+                resultMsgEl.textContent = "Master Energi! Sempurna! ⚡👑";
+                fireConfetti(true);
+            } else if (percentage >= 60) {
+                resultMsgEl.textContent = "Hebat! Ahli Transformasi! 💡";
+                fireConfetti(true);
+            } else {
+                resultMsgEl.textContent = "Ayo Hemat Energi Lagi! 🔋";
+            }
+        }
+
+        function restartGame() {
+            startGame();
+        }
+
+        function fireConfetti(long = false) {
+            var duration = long ? 3 * 1000 : 0.5 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100 };
+            var random = function(min, max) { return Math.random() * (max - min) + min; }
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) return clearInterval(interval);
+                var particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: random(0.1, 0.3), y: Math.random() - 0.2 }, colors: ['#f1c40f', '#e67e22', '#c0392b', '#FFFFFF'] }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: random(0.7, 0.9), y: Math.random() - 0.2 }, colors: ['#f1c40f', '#e67e22', '#c0392b', '#FFFFFF'] }));
+            }, 250);
+        }
+    </script>
+</body>
+</html>

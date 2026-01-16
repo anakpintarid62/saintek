@@ -1,291 +1,355 @@
-import React, { useState, useEffect } from 'react';
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Tebak Logo - HTML Version</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-// --- DATA KUIS MASIF (100+ Level) ---
-// Note: FontAwesome memiliki batas jumlah brand ikon. 
-// Daftar ini mencakup aplikasi sosial, teknologi, pembayaran, dan web populer.
-const quizData = [
-  // --- SOSIAL MEDIA & CHAT ---
-  { name: "WhatsApp", iconClass: "fa-whatsapp", color: "#25D366", bgColor: "bg-green-100" },
-  { name: "YouTube", iconClass: "fa-youtube", color: "#FF0000", bgColor: "bg-red-100" },
-  { name: "Instagram", iconClass: "fa-instagram", color: "#E1306C", bgColor: "bg-pink-100" },
-  { name: "Facebook", iconClass: "fa-facebook", color: "#1877F2", bgColor: "bg-blue-100" },
-  { name: "TikTok", iconClass: "fa-tiktok", color: "#000000", bgColor: "bg-gray-200" },
-  { name: "Twitter / X", iconClass: "fa-x-twitter", color: "#000000", bgColor: "bg-gray-100" },
-  { name: "Snapchat", iconClass: "fa-snapchat", color: "#FFFC00", bgColor: "bg-yellow-100" },
-  { name: "Telegram", iconClass: "fa-telegram", color: "#0088cc", bgColor: "bg-blue-50" },
-  { name: "Discord", iconClass: "fa-discord", color: "#5865F2", bgColor: "bg-indigo-100" },
-  { name: "Pinterest", iconClass: "fa-pinterest", color: "#E60023", bgColor: "bg-red-50" },
-  { name: "LinkedIn", iconClass: "fa-linkedin", color: "#0A66C2", bgColor: "bg-blue-200" },
-  { name: "Reddit", iconClass: "fa-reddit", color: "#FF4500", bgColor: "bg-orange-100" },
-  { name: "Quora", iconClass: "fa-quora", color: "#B92B27", bgColor: "bg-red-100" },
-  { name: "Twitch", iconClass: "fa-twitch", color: "#9146FF", bgColor: "bg-purple-100" },
-  { name: "Line", iconClass: "fa-line", color: "#00C300", bgColor: "bg-green-50" },
-  { name: "Skype", iconClass: "fa-skype", color: "#00AFF0", bgColor: "bg-blue-100" },
-  { name: "Slack", iconClass: "fa-slack", color: "#4A154B", bgColor: "bg-purple-50" },
-  { name: "WeChat", iconClass: "fa-weixin", color: "#7BB32E", bgColor: "bg-green-100" },
-  { name: "Tumblr", iconClass: "fa-tumblr", color: "#36465D", bgColor: "bg-gray-300" },
-  { name: "Viber", iconClass: "fa-viber", color: "#665CAC", bgColor: "bg-purple-200" },
-  
-  // --- MUSIK & HIBURAN ---
-  { name: "Spotify", iconClass: "fa-spotify", color: "#1DB954", bgColor: "bg-green-900" },
-  { name: "SoundCloud", iconClass: "fa-soundcloud", color: "#FF3300", bgColor: "bg-orange-50" },
-  { name: "Apple Music", iconClass: "fa-itunes", color: "#FB233B", bgColor: "bg-pink-50" },
-  { name: "Deezer", iconClass: "fa-deezer", color: "#323232", bgColor: "bg-gray-100" },
-  { name: "Napster", iconClass: "fa-napster", color: "#E11721", bgColor: "bg-red-200" },
-  { name: "Vimeo", iconClass: "fa-vimeo", color: "#1AB7EA", bgColor: "bg-blue-50" },
-  { name: "Dailymotion", iconClass: "fa-dailymotion", color: "#202224", bgColor: "bg-gray-100" },
-  { name: "Steam", iconClass: "fa-steam", color: "#171A21", bgColor: "bg-blue-900" },
-  { name: "PlayStation", iconClass: "fa-playstation", color: "#003791", bgColor: "bg-blue-800" },
-  { name: "Xbox", iconClass: "fa-xbox", color: "#107C10", bgColor: "bg-green-200" },
-  
-  // --- TEKNOLOGI & BRAND ---
-  { name: "Google", iconClass: "fa-google", color: "#4285F4", bgColor: "bg-blue-50" },
-  { name: "Apple", iconClass: "fa-apple", color: "#000000", bgColor: "bg-gray-200" },
-  { name: "Microsoft", iconClass: "fa-microsoft", color: "#F25022", bgColor: "bg-gray-100" },
-  { name: "Android", iconClass: "fa-android", color: "#3DDC84", bgColor: "bg-green-50" },
-  { name: "Amazon", iconClass: "fa-amazon", color: "#FF9900", bgColor: "bg-yellow-50" },
-  { name: "Windows", iconClass: "fa-windows", color: "#0078D6", bgColor: "bg-blue-100" },
-  { name: "Linux", iconClass: "fa-linux", color: "#FCC624", bgColor: "bg-yellow-200" },
-  { name: "Dropbox", iconClass: "fa-dropbox", color: "#0061FF", bgColor: "bg-blue-100" },
-  { name: "Google Drive", iconClass: "fa-google-drive", color: "#0F9D58", bgColor: "bg-green-50" },
-  { name: "Google Play", iconClass: "fa-google-play", color: "#414141", bgColor: "bg-gray-100" },
-  { name: "App Store", iconClass: "fa-app-store-ios", color: "#007AFF", bgColor: "bg-blue-50" },
-  { name: "Yahoo", iconClass: "fa-yahoo", color: "#410093", bgColor: "bg-purple-100" },
-  { name: "Firefox", iconClass: "fa-firefox", color: "#FF7139", bgColor: "bg-orange-100" },
-  { name: "Chrome", iconClass: "fa-chrome", color: "#4285F4", bgColor: "bg-blue-50" },
-  { name: "Opera", iconClass: "fa-opera", color: "#FF1B2D", bgColor: "bg-red-50" },
-  { name: "Safari", iconClass: "fa-safari", color: "#00A0D6", bgColor: "bg-blue-100" },
-  { name: "Edge", iconClass: "fa-edge", color: "#0078D7", bgColor: "bg-blue-200" },
-  { name: "Internet Explorer", iconClass: "fa-internet-explorer", color: "#0076D6", bgColor: "bg-blue-100" },
-
-  // --- PEMBAYARAN & FINTECH ---
-  { name: "PayPal", iconClass: "fa-paypal", color: "#00457C", bgColor: "bg-blue-100" },
-  { name: "Stripe", iconClass: "fa-stripe", color: "#008CDD", bgColor: "bg-indigo-50" },
-  { name: "Visa", iconClass: "fa-cc-visa", color: "#1A1F71", bgColor: "bg-blue-200" },
-  { name: "Mastercard", iconClass: "fa-cc-mastercard", color: "#EB001B", bgColor: "bg-orange-50" },
-  { name: "Amex", iconClass: "fa-cc-amex", color: "#2E77BC", bgColor: "bg-blue-100" },
-  { name: "Bitcoin", iconClass: "fa-bitcoin", color: "#F7931A", bgColor: "bg-orange-100" },
-  { name: "Ethereum", iconClass: "fa-ethereum", color: "#3C3C3D", bgColor: "bg-gray-200" },
-  { name: "Alipay", iconClass: "fa-alipay", color: "#00A4E8", bgColor: "bg-blue-50" },
-
-  // --- TRAVEL & LIFESTYLE ---
-  { name: "Airbnb", iconClass: "fa-airbnb", color: "#FF5A5F", bgColor: "bg-red-100" },
-  { name: "Uber", iconClass: "fa-uber", color: "#000000", bgColor: "bg-gray-300" },
-  { name: "Lyft", iconClass: "fa-lyft", color: "#FF00BF", bgColor: "bg-pink-100" },
-  { name: "Waze", iconClass: "fa-waze", color: "#33CCFF", bgColor: "bg-cyan-50" },
-  { name: "Yelp", iconClass: "fa-yelp", color: "#AF0606", bgColor: "bg-red-100" },
-  { name: "TripAdvisor", iconClass: "fa-tripadvisor", color: "#00AF87", bgColor: "bg-green-100" },
-
-  // --- E-COMMERCE & WEB ---
-  { name: "Shopify", iconClass: "fa-shopify", color: "#96BF48", bgColor: "bg-green-100" },
-  { name: "Ebay", iconClass: "fa-ebay", color: "#E53238", bgColor: "bg-gray-50" },
-  { name: "Etsy", iconClass: "fa-etsy", color: "#F16521", bgColor: "bg-orange-100" },
-  { name: "Kickstarter", iconClass: "fa-kickstarter", color: "#2BDE73", bgColor: "bg-green-50" },
-  { name: "Patreon", iconClass: "fa-patreon", color: "#F96854", bgColor: "bg-red-100" },
-  { name: "Alibaba", iconClass: "fa-alibaba", color: "#FF6A00", bgColor: "bg-orange-50" },
-  
-  // --- CODING & DEV ---
-  { name: "GitHub", iconClass: "fa-github", color: "#181717", bgColor: "bg-gray-200" },
-  { name: "GitLab", iconClass: "fa-gitlab", color: "#FC6D26", bgColor: "bg-orange-100" },
-  { name: "Bitbucket", iconClass: "fa-bitbucket", color: "#0052CC", bgColor: "bg-blue-100" },
-  { name: "Stack Overflow", iconClass: "fa-stack-overflow", color: "#F48024", bgColor: "bg-orange-50" },
-  { name: "Trello", iconClass: "fa-trello", color: "#0079BF", bgColor: "bg-blue-50" },
-  { name: "Jira", iconClass: "fa-jira", color: "#0052CC", bgColor: "bg-blue-100" },
-  { name: "Python", iconClass: "fa-python", color: "#3776AB", bgColor: "bg-yellow-100" },
-  { name: "Java", iconClass: "fa-java", color: "#007396", bgColor: "bg-blue-50" },
-  { name: "JavaScript", iconClass: "fa-js", color: "#F7DF1E", bgColor: "bg-yellow-100" },
-  { name: "React", iconClass: "fa-react", color: "#61DAFB", bgColor: "bg-cyan-900" },
-  { name: "Angular", iconClass: "fa-angular", color: "#DD0031", bgColor: "bg-red-100" },
-  { name: "Vue.js", iconClass: "fa-vuejs", color: "#4FC08D", bgColor: "bg-green-50" },
-  { name: "Node.js", iconClass: "fa-node", color: "#339933", bgColor: "bg-green-100" },
-  { name: "PHP", iconClass: "fa-php", color: "#777BB4", bgColor: "bg-indigo-100" },
-  { name: "Docker", iconClass: "fa-docker", color: "#2496ED", bgColor: "bg-blue-50" },
-  { name: "AWS", iconClass: "fa-aws", color: "#FF9900", bgColor: "bg-yellow-50" },
-  { name: "Digital Ocean", iconClass: "fa-digital-ocean", color: "#0080FF", bgColor: "bg-blue-100" },
-  { name: "WordPress", iconClass: "fa-wordpress", color: "#21759B", bgColor: "bg-blue-50" },
-  { name: "Joomla", iconClass: "fa-joomla", color: "#F44321", bgColor: "bg-orange-50" },
-  { name: "Drupal", iconClass: "fa-drupal", color: "#0678BE", bgColor: "bg-blue-100" },
-  { name: "Wix", iconClass: "fa-wix", color: "#0C6EFC", bgColor: "bg-blue-50" },
-  { name: "Figma", iconClass: "fa-figma", color: "#F24E1E", bgColor: "bg-red-50" },
-  { name: "Sketch", iconClass: "fa-sketch", color: "#F7B500", bgColor: "bg-yellow-50" },
-  
-  // --- LAINNYA ---
-  { name: "Wikipedia", iconClass: "fa-wikipedia-w", color: "#000000", bgColor: "bg-gray-100" },
-  { name: "Medium", iconClass: "fa-medium", color: "#000000", bgColor: "bg-gray-200" },
-  { name: "Blogger", iconClass: "fa-blogger", color: "#FF5722", bgColor: "bg-orange-100" },
-  { name: "Evernote", iconClass: "fa-evernote", color: "#00A82D", bgColor: "bg-green-50" },
-  { name: "Mailchimp", iconClass: "fa-mailchimp", color: "#FFE01B", bgColor: "bg-yellow-200" },
-  { name: "Salesforce", iconClass: "fa-salesforce", color: "#00A1E0", bgColor: "bg-blue-100" },
-  { name: "Ubuntu", iconClass: "fa-ubuntu", color: "#E95420", bgColor: "bg-orange-100" },
-  { name: "Fedora", iconClass: "fa-fedora", color: "#294172", bgColor: "bg-blue-100" },
-  { name: "Raspberry Pi", iconClass: "fa-raspberry-pi", color: "#C51A4A", bgColor: "bg-red-100" },
-  { name: "IMDb", iconClass: "fa-imdb", color: "#DBA506", bgColor: "bg-yellow-100" },
-  { name: "Goodreads", iconClass: "fa-goodreads", color: "#372213", bgColor: "bg-yellow-50" },
-  { name: "ResearchGate", iconClass: "fa-researchgate", color: "#00CCBB", bgColor: "bg-cyan-50" },
-  { name: "Product Hunt", iconClass: "fa-product-hunt", color: "#DA552F", bgColor: "bg-orange-100" },
-  { name: "Hacker News", iconClass: "fa-hacker-news", color: "#FF6600", bgColor: "bg-orange-50" },
-  { name: "Flipboard", iconClass: "fa-flipboard", color: "#E12828", bgColor: "bg-red-100" },
-  { name: "Pocket", iconClass: "fa-get-pocket", color: "#EF4056", bgColor: "bg-red-50" },
-].map((item, index) => ({ id: index + 1, ...item })); // Auto-generate ID
-
-// Duplicate list to reach ~200 if needed, or shuffle. 
-// Untuk kualitas, saya pertahankan 100 item unik ini. Jika Anda ingin persis 200, 
-// kode di bawah akan menduplikasi array ini sekali lagi dengan sedikit acak.
-const fullQuizData = [...quizData, ...quizData].map((item, index) => ({
-  ...item,
-  id: index + 1
-}));
-
-
-export default function App() {
-  const [currentLevel, setCurrentLevel] = useState(0);
-  const [gameState, setGameState] = useState('intro'); // intro, playing, finished
-  const [phase, setPhase] = useState('guessing'); // guessing, reveal
-  const [timerWidth, setTimerWidth] = useState(100);
-
-  // Load FontAwesome
-  useEffect(() => {
-    const link = document.createElement("link");
-    link.href = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css";
-    link.rel = "stylesheet";
-    document.head.appendChild(link);
-    return () => document.head.removeChild(link);
-  }, []);
-
-  // Logika Game Loop & Suara
-  useEffect(() => {
-    if (gameState !== 'playing') return;
-
-    setPhase('guessing');
-    setTimerWidth(100);
-
-    const animTimeout = setTimeout(() => {
-        setTimerWidth(0);
-    }, 100);
-
-    const guessTimeout = setTimeout(() => {
-      setPhase('reveal');
-      
-      const answerText = fullQuizData[currentLevel].name;
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(answerText);
-        utterance.lang = 'id-ID'; 
-        utterance.rate = 1;
-        utterance.pitch = 1;
-        window.speechSynthesis.speak(utterance);
-      }
-
-      const nextLevelTimeout = setTimeout(() => {
-        if (currentLevel < fullQuizData.length - 1) {
-          setCurrentLevel(prev => prev + 1);
-        } else {
-          setGameState('finished');
+    <style>
+        /* Custom Animations */
+        @keyframes gentle-wobble {
+            0%, 100% { transform: rotate(-3deg); }
+            50% { transform: rotate(3deg); }
         }
-      }, 2500);
-
-      return () => clearTimeout(nextLevelTimeout);
-    }, 3100); 
-
-    return () => {
-      clearTimeout(guessTimeout);
-      clearTimeout(animTimeout);
-      window.speechSynthesis.cancel();
-    };
-  }, [currentLevel, gameState]);
-
-  const startGame = () => {
-    setCurrentLevel(0);
-    setGameState('playing');
-  };
-
-  const currentData = fullQuizData[currentLevel];
-
-  // Render Layar Selesai
-  if (gameState === 'finished') {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 font-sans p-4">
-        <div className="w-full max-w-4xl aspect-video bg-gradient-to-br from-indigo-600 to-purple-700 rounded-xl shadow-2xl flex flex-col items-center justify-center text-white relative overflow-hidden border-4 border-white/20">
-            <h1 className="text-6xl font-black mb-6 animate-bounce">SELESAI!</h1>
-            <p className="text-2xl mb-8">Total {fullQuizData.length} Logo Tertebak!</p>
-            <button onClick={startGame} className="px-8 py-3 bg-white text-purple-700 font-bold rounded-full text-xl hover:scale-105 transition-transform shadow-lg">Main Lagi</button>
-        </div>
-      </div>
-    );
-  }
-
-  // Render Layar Intro
-  if (gameState === 'intro') {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 font-sans p-4">
-        <div className="w-full max-w-4xl aspect-video bg-gradient-to-br from-blue-500 to-cyan-400 rounded-xl shadow-2xl flex flex-col items-center justify-center text-white relative overflow-hidden border-4 border-white/20">
-            <div className="absolute top-0 left-0 w-full h-full opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
-            <div className="z-10 text-center">
-              <h1 className="text-7xl font-black mb-2 drop-shadow-md">TEBAK LOGO</h1>
-              <p className="text-2xl mb-10 font-light opacity-90">Edisi 200+ Aplikasi Populer</p>
-              <div className="flex gap-4 justify-center mb-10 opacity-70">
-                 <i className="fab fa-whatsapp text-4xl animate-bounce" style={{animationDelay: '0s'}}></i>
-                 <i className="fab fa-instagram text-4xl animate-bounce" style={{animationDelay: '0.2s'}}></i>
-                 <i className="fab fa-youtube text-4xl animate-bounce" style={{animationDelay: '0.4s'}}></i>
-              </div>
-              <button onClick={startGame} className="px-12 py-4 bg-yellow-400 text-yellow-900 font-bold rounded-full text-2xl hover:scale-110 transition-transform shadow-xl border-b-4 border-yellow-600 active:border-b-0 active:translate-y-1">MULAI</button>
-            </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Render Layar Gameplay
-  return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-800 font-sans p-4">
-      <div className={`relative w-full max-w-4xl aspect-video ${currentData.bgColor} transition-colors duration-1000 rounded-xl shadow-2xl flex flex-col items-center justify-center overflow-hidden border-4 border-white/50`}>
+        .animate-gentle-wobble {
+            animation: gentle-wobble 3s ease-in-out infinite;
+        }
         
-        <div className="absolute inset-0 opacity-10 pointer-events-none">
-            <div className="absolute top-10 left-10 w-32 h-32 bg-current rounded-full blur-3xl"></div>
-            <div className="absolute bottom-10 right-10 w-48 h-48 bg-current rounded-full blur-3xl"></div>
+        /* Fade In Animation */
+        .fade-in-zoom {
+            animation: fadeInZoom 0.5s ease-out forwards;
+        }
+        @keyframes fadeInZoom {
+            from { opacity: 0; transform: scale(0.5); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Utility for Aspect Ratio (in case Tailwind plugin not loaded) */
+        .aspect-video {
+            aspect-ratio: 16 / 9;
+        }
+    </style>
+</head>
+<body class="bg-gray-800 font-sans flex flex-col items-center justify-center min-h-screen p-4">
+
+    <!-- Main Container 16:9 -->
+    <div id="app-container" class="relative w-full max-w-4xl aspect-video bg-gray-900 rounded-xl shadow-2xl overflow-hidden border-4 border-white/50 transition-colors duration-1000">
+
+        <!-- LAYER 1: DECORATION (Background Blobs) -->
+        <div class="absolute inset-0 opacity-10 pointer-events-none">
+            <div class="absolute top-10 left-10 w-32 h-32 bg-white rounded-full blur-3xl"></div>
+            <div class="absolute bottom-10 right-10 w-48 h-48 bg-white rounded-full blur-3xl"></div>
         </div>
 
-        {/* Counter Level removed */}
-
-        <div className="relative z-10 mb-8">
-            <style>{`
-                @keyframes gentle-wobble {
-                    0%, 100% { transform: rotate(-3deg); }
-                    50% { transform: rotate(3deg); }
-                }
-                .animate-gentle-wobble {
-                    animation: gentle-wobble 3s ease-in-out infinite;
-                }
-            `}</style>
+        <!-- LAYER 2: INTRO SCREEN -->
+        <div id="intro-screen" class="absolute inset-0 z-50 flex flex-col items-center justify-center bg-gradient-to-br from-blue-500 to-cyan-400 text-white">
+            <div class="absolute top-0 left-0 w-full h-full opacity-20" style="background-image: url('https://www.transparenttextures.com/patterns/cubes.png');"></div>
             
-            <div className="w-64 h-64 bg-white rounded-3xl shadow-2xl flex items-center justify-center animate-gentle-wobble transform transition-all duration-500">
-                <i className={`fab ${currentData.iconClass} text-9xl filter drop-shadow-lg`} style={{ color: currentData.color }}></i>
+            <div class="z-10 text-center">
+                <h1 class="text-7xl font-black mb-2 drop-shadow-md">TEBAK LOGO</h1>
+                <p class="text-2xl mb-10 font-light opacity-90">Edisi 200+ Aplikasi Populer</p>
+                
+                <div class="flex gap-4 justify-center mb-10 opacity-70">
+                    <i class="fab fa-whatsapp text-4xl animate-bounce" style="animation-delay: 0s"></i>
+                    <i class="fab fa-instagram text-4xl animate-bounce" style="animation-delay: 0.2s"></i>
+                    <i class="fab fa-youtube text-4xl animate-bounce" style="animation-delay: 0.4s"></i>
+                </div>
+
+                <button onclick="startGame()" class="px-12 py-4 bg-yellow-400 text-yellow-900 font-bold rounded-full text-2xl hover:scale-110 transition-transform shadow-xl border-b-4 border-yellow-600 active:border-b-0 active:translate-y-1 cursor-pointer">
+                    MULAI
+                </button>
             </div>
         </div>
 
-        <div className="h-24 w-full flex flex-col items-center justify-center relative z-20">
-            {phase === 'guessing' ? (
-                <div className="w-1/2 max-w-lg bg-gray-300 h-14 rounded-full shadow-inner border-4 border-white/50 relative">
-                    <div 
-                        className="h-full bg-gradient-to-r from-red-500 to-orange-400 rounded-full transition-all duration-[3000ms] ease-linear relative"
-                        style={{ width: `${timerWidth}%` }}
-                    >
-                        {/* Moving Emoji/Logo Icon */}
-                        <div className="absolute right-0 top-1/2 transform translate-x-1/2 -translate-y-1/2 bg-white w-20 h-20 rounded-full border-4 border-orange-400 flex items-center justify-center shadow-lg z-10">
-                            <i className={`fab ${currentData.iconClass} text-4xl`} style={{ color: currentData.color }}></i>
+        <!-- LAYER 3: GAMEPLAY SCREEN (Hidden by default) -->
+        <div id="game-screen" class="absolute inset-0 z-40 hidden flex flex-col items-center justify-center">
+            
+            <!-- Logo Area -->
+            <div class="relative z-10 mb-8">
+                <div class="w-64 h-64 bg-white rounded-3xl shadow-2xl flex items-center justify-center animate-gentle-wobble transform transition-all duration-500">
+                    <i id="quiz-icon" class="fab fa-whatsapp text-9xl filter drop-shadow-lg transition-colors duration-300"></i>
+                </div>
+            </div>
+
+            <!-- Timer & Answer Area -->
+            <div class="h-24 w-full flex flex-col items-center justify-center relative z-20">
+                
+                <!-- Timer Bar Wrapper -->
+                <div id="timer-container" class="w-1/2 max-w-lg bg-gray-300 h-14 rounded-full shadow-inner border-4 border-white/50 relative">
+                    <div id="timer-bar" class="h-full bg-gradient-to-r from-red-500 to-orange-400 rounded-full relative w-full">
+                        <!-- Moving Emoji/Logo Icon Head -->
+                        <div class="absolute right-0 top-1/2 transform translate-x-1/2 -translate-y-1/2 bg-white w-20 h-20 rounded-full border-4 border-orange-400 flex items-center justify-center shadow-lg z-10">
+                            <i id="timer-head-icon" class="fab fa-whatsapp text-4xl text-gray-500"></i>
                         </div>
                     </div>
                 </div>
-            ) : (
-                <div className="animate-in fade-in zoom-in duration-500">
-                    <h2 className="text-6xl font-black tracking-wider uppercase text-center drop-shadow-md" style={{ color: '#333' }}>
-                        {currentData.name}
+
+                <!-- Answer Text (Hidden initially) -->
+                <div id="answer-container" class="hidden fade-in-zoom">
+                    <h2 id="answer-text" class="text-6xl font-black tracking-wider uppercase text-center drop-shadow-md text-gray-800">
+                        JAWABAN
                     </h2>
                 </div>
-            )}
+
+            </div>
         </div>
-      </div>
-      <p className="text-gray-400 mt-4 text-sm">Preview Mode: 16:9 Aspect Ratio</p>
+
+        <!-- LAYER 4: FINISHED SCREEN (Hidden by default) -->
+        <div id="finished-screen" class="absolute inset-0 z-50 hidden flex flex-col items-center justify-center bg-gradient-to-br from-indigo-600 to-purple-700 text-white">
+            <h1 class="text-6xl font-black mb-6 animate-bounce">SELESAI!</h1>
+            <p id="final-score-text" class="text-2xl mb-8">Terima kasih sudah bermain.</p>
+            <button onclick="startGame()" class="px-8 py-3 bg-white text-purple-700 font-bold rounded-full text-xl hover:scale-105 transition-transform shadow-lg cursor-pointer">
+                Main Lagi
+            </button>
+        </div>
+
     </div>
-  );
-}
+
+    <p class="text-gray-400 mt-4 text-sm">HTML Version: 16:9 Aspect Ratio</p>
+
+    <script>
+        // --- DATA ---
+        const rawQuizData = [
+            { name: "WhatsApp", iconClass: "fa-whatsapp", color: "#25D366", bgColor: "bg-green-100" },
+            { name: "YouTube", iconClass: "fa-youtube", color: "#FF0000", bgColor: "bg-red-100" },
+            { name: "Instagram", iconClass: "fa-instagram", color: "#E1306C", bgColor: "bg-pink-100" },
+            { name: "Facebook", iconClass: "fa-facebook", color: "#1877F2", bgColor: "bg-blue-100" },
+            { name: "TikTok", iconClass: "fa-tiktok", color: "#000000", bgColor: "bg-gray-200" },
+            { name: "Twitter / X", iconClass: "fa-x-twitter", color: "#000000", bgColor: "bg-gray-100" },
+            { name: "Snapchat", iconClass: "fa-snapchat", color: "#FFFC00", bgColor: "bg-yellow-100" },
+            { name: "Telegram", iconClass: "fa-telegram", color: "#0088cc", bgColor: "bg-blue-50" },
+            { name: "Discord", iconClass: "fa-discord", color: "#5865F2", bgColor: "bg-indigo-100" },
+            { name: "Pinterest", iconClass: "fa-pinterest", color: "#E60023", bgColor: "bg-red-50" },
+            { name: "LinkedIn", iconClass: "fa-linkedin", color: "#0A66C2", bgColor: "bg-blue-200" },
+            { name: "Reddit", iconClass: "fa-reddit", color: "#FF4500", bgColor: "bg-orange-100" },
+            { name: "Quora", iconClass: "fa-quora", color: "#B92B27", bgColor: "bg-red-100" },
+            { name: "Twitch", iconClass: "fa-twitch", color: "#9146FF", bgColor: "bg-purple-100" },
+            { name: "Line", iconClass: "fa-line", color: "#00C300", bgColor: "bg-green-50" },
+            { name: "Skype", iconClass: "fa-skype", color: "#00AFF0", bgColor: "bg-blue-100" },
+            { name: "Slack", iconClass: "fa-slack", color: "#4A154B", bgColor: "bg-purple-50" },
+            { name: "WeChat", iconClass: "fa-weixin", color: "#7BB32E", bgColor: "bg-green-100" },
+            { name: "Tumblr", iconClass: "fa-tumblr", color: "#36465D", bgColor: "bg-gray-300" },
+            { name: "Viber", iconClass: "fa-viber", color: "#665CAC", bgColor: "bg-purple-200" },
+            { name: "Spotify", iconClass: "fa-spotify", color: "#1DB954", bgColor: "bg-green-900" },
+            { name: "SoundCloud", iconClass: "fa-soundcloud", color: "#FF3300", bgColor: "bg-orange-50" },
+            { name: "Apple Music", iconClass: "fa-itunes", color: "#FB233B", bgColor: "bg-pink-50" },
+            { name: "Deezer", iconClass: "fa-deezer", color: "#323232", bgColor: "bg-gray-100" },
+            { name: "Napster", iconClass: "fa-napster", color: "#E11721", bgColor: "bg-red-200" },
+            { name: "Vimeo", iconClass: "fa-vimeo", color: "#1AB7EA", bgColor: "bg-blue-50" },
+            { name: "Dailymotion", iconClass: "fa-dailymotion", color: "#202224", bgColor: "bg-gray-100" },
+            { name: "Steam", iconClass: "fa-steam", color: "#171A21", bgColor: "bg-blue-900" },
+            { name: "PlayStation", iconClass: "fa-playstation", color: "#003791", bgColor: "bg-blue-800" },
+            { name: "Xbox", iconClass: "fa-xbox", color: "#107C10", bgColor: "bg-green-200" },
+            { name: "Google", iconClass: "fa-google", color: "#4285F4", bgColor: "bg-blue-50" },
+            { name: "Apple", iconClass: "fa-apple", color: "#000000", bgColor: "bg-gray-200" },
+            { name: "Microsoft", iconClass: "fa-microsoft", color: "#F25022", bgColor: "bg-gray-100" },
+            { name: "Android", iconClass: "fa-android", color: "#3DDC84", bgColor: "bg-green-50" },
+            { name: "Amazon", iconClass: "fa-amazon", color: "#FF9900", bgColor: "bg-yellow-50" },
+            { name: "Windows", iconClass: "fa-windows", color: "#0078D6", bgColor: "bg-blue-100" },
+            { name: "Linux", iconClass: "fa-linux", color: "#FCC624", bgColor: "bg-yellow-200" },
+            { name: "Dropbox", iconClass: "fa-dropbox", color: "#0061FF", bgColor: "bg-blue-100" },
+            { name: "Google Drive", iconClass: "fa-google-drive", color: "#0F9D58", bgColor: "bg-green-50" },
+            { name: "Google Play", iconClass: "fa-google-play", color: "#414141", bgColor: "bg-gray-100" },
+            { name: "App Store", iconClass: "fa-app-store-ios", color: "#007AFF", bgColor: "bg-blue-50" },
+            { name: "Yahoo", iconClass: "fa-yahoo", color: "#410093", bgColor: "bg-purple-100" },
+            { name: "Firefox", iconClass: "fa-firefox", color: "#FF7139", bgColor: "bg-orange-100" },
+            { name: "Chrome", iconClass: "fa-chrome", color: "#4285F4", bgColor: "bg-blue-50" },
+            { name: "Opera", iconClass: "fa-opera", color: "#FF1B2D", bgColor: "bg-red-50" },
+            { name: "Safari", iconClass: "fa-safari", color: "#00A0D6", bgColor: "bg-blue-100" },
+            { name: "Edge", iconClass: "fa-edge", color: "#0078D7", bgColor: "bg-blue-200" },
+            { name: "Internet Explorer", iconClass: "fa-internet-explorer", color: "#0076D6", bgColor: "bg-blue-100" },
+            { name: "PayPal", iconClass: "fa-paypal", color: "#00457C", bgColor: "bg-blue-100" },
+            { name: "Stripe", iconClass: "fa-stripe", color: "#008CDD", bgColor: "bg-indigo-50" },
+            { name: "Visa", iconClass: "fa-cc-visa", color: "#1A1F71", bgColor: "bg-blue-200" },
+            { name: "Mastercard", iconClass: "fa-cc-mastercard", color: "#EB001B", bgColor: "bg-orange-50" },
+            { name: "Amex", iconClass: "fa-cc-amex", color: "#2E77BC", bgColor: "bg-blue-100" },
+            { name: "Bitcoin", iconClass: "fa-bitcoin", color: "#F7931A", bgColor: "bg-orange-100" },
+            { name: "Ethereum", iconClass: "fa-ethereum", color: "#3C3C3D", bgColor: "bg-gray-200" },
+            { name: "Alipay", iconClass: "fa-alipay", color: "#00A4E8", bgColor: "bg-blue-50" },
+            { name: "Airbnb", iconClass: "fa-airbnb", color: "#FF5A5F", bgColor: "bg-red-100" },
+            { name: "Uber", iconClass: "fa-uber", color: "#000000", bgColor: "bg-gray-300" },
+            { name: "Lyft", iconClass: "fa-lyft", color: "#FF00BF", bgColor: "bg-pink-100" },
+            { name: "Waze", iconClass: "fa-waze", color: "#33CCFF", bgColor: "bg-cyan-50" },
+            { name: "Yelp", iconClass: "fa-yelp", color: "#AF0606", bgColor: "bg-red-100" },
+            { name: "TripAdvisor", iconClass: "fa-tripadvisor", color: "#00AF87", bgColor: "bg-green-100" },
+            { name: "Shopify", iconClass: "fa-shopify", color: "#96BF48", bgColor: "bg-green-100" },
+            { name: "Ebay", iconClass: "fa-ebay", color: "#E53238", bgColor: "bg-gray-50" },
+            { name: "Etsy", iconClass: "fa-etsy", color: "#F16521", bgColor: "bg-orange-100" },
+            { name: "Kickstarter", iconClass: "fa-kickstarter", color: "#2BDE73", bgColor: "bg-green-50" },
+            { name: "Patreon", iconClass: "fa-patreon", color: "#F96854", bgColor: "bg-red-100" },
+            { name: "Alibaba", iconClass: "fa-alibaba", color: "#FF6A00", bgColor: "bg-orange-50" },
+            { name: "GitHub", iconClass: "fa-github", color: "#181717", bgColor: "bg-gray-200" },
+            { name: "GitLab", iconClass: "fa-gitlab", color: "#FC6D26", bgColor: "bg-orange-100" },
+            { name: "Bitbucket", iconClass: "fa-bitbucket", color: "#0052CC", bgColor: "bg-blue-100" },
+            { name: "Stack Overflow", iconClass: "fa-stack-overflow", color: "#F48024", bgColor: "bg-orange-50" },
+            { name: "Trello", iconClass: "fa-trello", color: "#0079BF", bgColor: "bg-blue-50" },
+            { name: "Jira", iconClass: "fa-jira", color: "#0052CC", bgColor: "bg-blue-100" },
+            { name: "Python", iconClass: "fa-python", color: "#3776AB", bgColor: "bg-yellow-100" },
+            { name: "Java", iconClass: "fa-java", color: "#007396", bgColor: "bg-blue-50" },
+            { name: "JavaScript", iconClass: "fa-js", color: "#F7DF1E", bgColor: "bg-yellow-100" },
+            { name: "React", iconClass: "fa-react", color: "#61DAFB", bgColor: "bg-cyan-900" },
+            { name: "Angular", iconClass: "fa-angular", color: "#DD0031", bgColor: "bg-red-100" },
+            { name: "Vue.js", iconClass: "fa-vuejs", color: "#4FC08D", bgColor: "bg-green-50" },
+            { name: "Node.js", iconClass: "fa-node", color: "#339933", bgColor: "bg-green-100" },
+            { name: "PHP", iconClass: "fa-php", color: "#777BB4", bgColor: "bg-indigo-100" },
+            { name: "Docker", iconClass: "fa-docker", color: "#2496ED", bgColor: "bg-blue-50" },
+            { name: "AWS", iconClass: "fa-aws", color: "#FF9900", bgColor: "bg-yellow-50" },
+            { name: "Digital Ocean", iconClass: "fa-digital-ocean", color: "#0080FF", bgColor: "bg-blue-100" },
+            { name: "WordPress", iconClass: "fa-wordpress", color: "#21759B", bgColor: "bg-blue-50" },
+            { name: "Joomla", iconClass: "fa-joomla", color: "#F44321", bgColor: "bg-orange-50" },
+            { name: "Drupal", iconClass: "fa-drupal", color: "#0678BE", bgColor: "bg-blue-100" },
+            { name: "Wix", iconClass: "fa-wix", color: "#0C6EFC", bgColor: "bg-blue-50" },
+            { name: "Figma", iconClass: "fa-figma", color: "#F24E1E", bgColor: "bg-red-50" },
+            { name: "Sketch", iconClass: "fa-sketch", color: "#F7B500", bgColor: "bg-yellow-50" },
+            { name: "Wikipedia", iconClass: "fa-wikipedia-w", color: "#000000", bgColor: "bg-gray-100" },
+            { name: "Medium", iconClass: "fa-medium", color: "#000000", bgColor: "bg-gray-200" },
+            { name: "Blogger", iconClass: "fa-blogger", color: "#FF5722", bgColor: "bg-orange-100" },
+            { name: "Evernote", iconClass: "fa-evernote", color: "#00A82D", bgColor: "bg-green-50" },
+            { name: "Mailchimp", iconClass: "fa-mailchimp", color: "#FFE01B", bgColor: "bg-yellow-200" },
+            { name: "Salesforce", iconClass: "fa-salesforce", color: "#00A1E0", bgColor: "bg-blue-100" },
+            { name: "Ubuntu", iconClass: "fa-ubuntu", color: "#E95420", bgColor: "bg-orange-100" },
+            { name: "Fedora", iconClass: "fa-fedora", color: "#294172", bgColor: "bg-blue-100" },
+            { name: "Raspberry Pi", iconClass: "fa-raspberry-pi", color: "#C51A4A", bgColor: "bg-red-100" },
+            { name: "IMDb", iconClass: "fa-imdb", color: "#DBA506", bgColor: "bg-yellow-100" },
+            { name: "Goodreads", iconClass: "fa-goodreads", color: "#372213", bgColor: "bg-yellow-50" },
+            { name: "ResearchGate", iconClass: "fa-researchgate", color: "#00CCBB", bgColor: "bg-cyan-50" },
+            { name: "Product Hunt", iconClass: "fa-product-hunt", color: "#DA552F", bgColor: "bg-orange-100" },
+            { name: "Hacker News", iconClass: "fa-hacker-news", color: "#FF6600", bgColor: "bg-orange-50" },
+            { name: "Flipboard", iconClass: "fa-flipboard", color: "#E12828", bgColor: "bg-red-100" },
+            { name: "Pocket", iconClass: "fa-get-pocket", color: "#EF4056", bgColor: "bg-red-50" }
+        ];
+        
+        // Gandakan agar lebih banyak (opsional, tapi saya ambil 1 set saja untuk kualitas)
+        const quizData = [...rawQuizData, ...rawQuizData];
+
+        // --- STATE VARIABLES ---
+        let currentLevel = 0;
+        let timerTimeout;
+        let revealTimeout;
+        let nextLevelTimeout;
+
+        // --- DOM ELEMENTS ---
+        const appContainer = document.getElementById('app-container');
+        const introScreen = document.getElementById('intro-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const finishedScreen = document.getElementById('finished-screen');
+        
+        const quizIcon = document.getElementById('quiz-icon');
+        const timerContainer = document.getElementById('timer-container');
+        const timerBar = document.getElementById('timer-bar');
+        const timerHeadIcon = document.getElementById('timer-head-icon');
+        const answerContainer = document.getElementById('answer-container');
+        const answerText = document.getElementById('answer-text');
+        const finalScoreText = document.getElementById('final-score-text');
+
+        // --- FUNCTIONS ---
+
+        function startGame() {
+            // Reset State
+            currentLevel = 0;
+            clearAllTimeouts();
+
+            // UI Changes
+            introScreen.classList.add('hidden');
+            finishedScreen.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+            gameScreen.classList.add('flex');
+
+            loadLevel();
+        }
+
+        function loadLevel() {
+            if (currentLevel >= quizData.length) {
+                endGame();
+                return;
+            }
+
+            const data = quizData[currentLevel];
+
+            // 1. Reset UI Elements
+            answerContainer.classList.add('hidden');
+            timerContainer.classList.remove('hidden');
+            
+            // 2. Set Colors & Icons
+            // Background Container color class
+            appContainer.className = `relative w-full max-w-4xl aspect-video rounded-xl shadow-2xl overflow-hidden border-4 border-white/50 transition-colors duration-1000 flex flex-col items-center justify-center ${data.bgColor}`;
+
+            // Main Logo Icon
+            quizIcon.className = `fab ${data.iconClass} text-9xl filter drop-shadow-lg transition-colors duration-300`;
+            quizIcon.style.color = data.color;
+
+            // Timer Head Icon
+            timerHeadIcon.className = `fab ${data.iconClass} text-4xl`;
+            timerHeadIcon.style.color = data.color;
+
+            // 3. Reset Timer Bar (Instant 100%)
+            timerBar.style.transition = 'none';
+            timerBar.style.width = '100%';
+            
+            // Force Reflow/Repaint to ensure the 'none' transition takes effect immediately
+            void timerBar.offsetWidth;
+
+            // 4. Start Animation (3 seconds)
+            setTimeout(() => {
+                timerBar.style.transition = 'width 3000ms linear';
+                timerBar.style.width = '0%';
+            }, 50); // Small delay to ensure CSS transition catches on
+
+            // 5. Schedule Reveal
+            timerTimeout = setTimeout(revealAnswer, 3050); // 3s + buffer
+        }
+
+        function revealAnswer() {
+            const data = quizData[currentLevel];
+
+            // UI Changes
+            timerContainer.classList.add('hidden');
+            answerContainer.classList.remove('hidden');
+            answerText.innerText = data.name;
+
+            // Text to Speech
+            speak(data.name);
+
+            // Schedule Next Level
+            nextLevelTimeout = setTimeout(() => {
+                currentLevel++;
+                loadLevel();
+            }, 2500); // 2.5 seconds to read answer
+        }
+
+        function endGame() {
+            gameScreen.classList.add('hidden');
+            gameScreen.classList.remove('flex');
+            finishedScreen.classList.remove('hidden');
+            finishedScreen.classList.add('flex');
+            finalScoreText.innerText = `Total ${quizData.length} Logo Tertebak!`;
+        }
+
+        function clearAllTimeouts() {
+            clearTimeout(timerTimeout);
+            clearTimeout(revealTimeout);
+            clearTimeout(nextLevelTimeout);
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+        }
+
+        function speak(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // Stop previous
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'id-ID'; // Bahasa Indonesia
+                utterance.rate = 1;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+    </script>
+</body>
+</html>
